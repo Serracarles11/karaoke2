@@ -61,11 +61,6 @@ body {
 }
 
 .tv-draw-center {
-  position: absolute;
-  left: 50%;
-  bottom: 28px;
-  transform: translateX(-50%);
-  width: min(86vw, 58rem);
   display: flex;
   flex-direction: column;
   align-items: center;

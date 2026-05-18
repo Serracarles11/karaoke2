@@ -81,6 +81,30 @@ function writeManifest(entries: ManifestEntry[]) {
   fs.writeFileSync(manifestPath, `${JSON.stringify({ canciones: entries }, null, 2)}\n`);
 }
 
+function buildManifestFromBundledPublicVideos() {
+  const manifest: ManifestEntry[] = [];
+
+  for (const [numeroRaw, fileName] of Object.entries(LOCAL_VIDEO_FILES)) {
+    if (!fileName) continue;
+
+    const numero = Number(numeroRaw);
+    const targetPath = path.join(targetDir, fileName);
+
+    if (!fs.existsSync(targetPath)) {
+      console.warn(`[vercel] Falta el video publico ${fileName} para la cancion ${numero}.`);
+      continue;
+    }
+
+    manifest.push({
+      numero,
+      archivo: fileName,
+      src: `/canciones/${encodeURIComponent(fileName)}`,
+    });
+  }
+
+  return manifest;
+}
+
 function main() {
   ensureDir(targetDir);
 
@@ -104,13 +128,17 @@ function main() {
   }
 
   if (isVercelBuild) {
-    for (const existingFile of fs.readdirSync(targetDir)) {
-      safeUnlink(path.join(targetDir, existingFile));
+    const bundledManifest = buildManifestFromBundledPublicVideos();
+
+    if (bundledManifest.length > 0) {
+      writeManifest(bundledManifest);
+      console.log(`[vercel] Manifest generado desde public/canciones: ${bundledManifest.length} videos.`);
+      return;
     }
 
     writeManifest([]);
     console.warn(
-      "[vercel] Build en Vercel sin VIDEO_CDN_BASE_URL. Se genera un manifiesto vacio para evitar subir videos locales.",
+      "[vercel] Build en Vercel sin VIDEO_CDN_BASE_URL ni videos versionados en public/canciones. Se genera un manifiesto vacio.",
     );
     return;
   }

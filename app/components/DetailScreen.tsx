@@ -58,9 +58,14 @@ const VIDEO_FRAME_OVERRIDES: Partial<
 > = {
   // Some downloaded karaoke videos are exported with the lyric column pushed to one side.
   // These overrides let the frame be re-centered per song without breaking the default layout.
-  27: { scale: 1.22, translateXPercent: -14 },
-  26: { scale: 1.22, translateXPercent: -18 },
+  26: { scale: 1.18, translateXPercent: -14 },
 };
+
+const DEFAULT_VIDEO_FRAME = {
+  scale: 1.22,
+  translateXPercent: -18,
+  translateYPercent: 0,
+} as const;
 
 type CancionesManifest = {
   canciones: Array<{
@@ -209,10 +214,9 @@ export default function DetailScreen() {
     void video.play().catch(() => {});
   }
 
-  const videoFrameOverride = selectedSong ? VIDEO_FRAME_OVERRIDES[selectedSong.numero] : undefined;
-  const videoTransform = videoFrameOverride
-    ? `translate(${videoFrameOverride.translateXPercent}%, ${videoFrameOverride.translateYPercent ?? 0}%) scale(${videoFrameOverride.scale})`
-    : "translate(0%, 0%) scale(1)";
+  const videoFrame =
+    selectedSong ? (VIDEO_FRAME_OVERRIDES[selectedSong.numero] ?? DEFAULT_VIDEO_FRAME) : DEFAULT_VIDEO_FRAME;
+  const videoTransform = `translate(${videoFrame.translateXPercent}%, ${videoFrame.translateYPercent ?? 0}%) scale(${videoFrame.scale})`;
 
   return (
     <main className="screen-shell relative min-h-screen overflow-x-hidden bg-[#08111f] text-white">

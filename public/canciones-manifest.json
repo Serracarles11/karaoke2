@@ -1,0 +1,504 @@
+{
+  "canciones": [
+    {
+      "numero": 0,
+      "archivo": "unanochemas.mp4",
+      "src": "/canciones/unanochemas.mp4"
+    },
+    {
+      "numero": 1,
+      "archivo": "laplena.mp4",
+      "src": "/canciones/laplena.mp4"
+    },
+    {
+      "numero": 2,
+      "archivo": "lamarinastamorena.mp4",
+      "src": "/canciones/lamarinastamorena.mp4"
+    },
+    {
+      "numero": 3,
+      "archivo": "esadiva.mp4",
+      "src": "/canciones/esadiva.mp4"
+    },
+    {
+      "numero": 4,
+      "archivo": "unanocheconhugel.mp4",
+      "src": "/canciones/unanocheconhugel.mp4"
+    },
+    {
+      "numero": 5,
+      "archivo": "capazvswefoundlove.mp4",
+      "src": "/canciones/capazvswefoundlove.mp4"
+    },
+    {
+      "numero": 6,
+      "archivo": "antesmuertaquesencilla.mp4",
+      "src": "/canciones/antesmuertaquesencilla.mp4"
+    },
+    {
+      "numero": 7,
+      "archivo": "mrvain.mp4",
+      "src": "/canciones/mrvain.mp4"
+    },
+    {
+      "numero": 8,
+      "archivo": "mehasinvitadoabailar.mp4",
+      "src": "/canciones/mehasinvitadoabailar.mp4"
+    },
+    {
+      "numero": 9,
+      "archivo": "siantestehubieraconocido.mp4",
+      "src": "/canciones/siantestehubieraconocido.mp4"
+    },
+    {
+      "numero": 10,
+      "archivo": "lareina.mp4",
+      "src": "/canciones/lareina.mp4"
+    },
+    {
+      "numero": 11,
+      "archivo": "vivelavida.mp4",
+      "src": "/canciones/vivelavida.mp4"
+    },
+    {
+      "numero": 12,
+      "archivo": "zorra.mp4",
+      "src": "/canciones/zorra.mp4"
+    },
+    {
+      "numero": 13,
+      "archivo": "cuandoelmartetenga.mp4",
+      "src": "/canciones/cuandoelmartetenga.mp4"
+    },
+    {
+      "numero": 14,
+      "archivo": "malamujer.mp4",
+      "src": "/canciones/malamujer.mp4"
+    },
+    {
+      "numero": 15,
+      "archivo": "lamorocha.mp4",
+      "src": "/canciones/lamorocha.mp4"
+    },
+    {
+      "numero": 16,
+      "archivo": "gasolina.mp4",
+      "src": "/canciones/gasolina.mp4"
+    },
+    {
+      "numero": 17,
+      "archivo": "vagabundo.mp4",
+      "src": "/canciones/vagabundo.mp4"
+    },
+    {
+      "numero": 18,
+      "archivo": "elmerengue.mp4",
+      "src": "/canciones/elmerengue.mp4"
+    },
+    {
+      "numero": 19,
+      "archivo": "cotixcoti.mp4",
+      "src": "/canciones/cotixcoti.mp4"
+    },
+    {
+      "numero": 20,
+      "archivo": "nocheentera.mp4",
+      "src": "/canciones/nocheentera.mp4"
+    },
+    {
+      "numero": 21,
+      "archivo": "labilirrubina.mp4",
+      "src": "/canciones/labilirrubina.mp4"
+    },
+    {
+      "numero": 22,
+      "archivo": "mariposas.mp4",
+      "src": "/canciones/mariposas.mp4"
+    },
+    {
+      "numero": 23,
+      "archivo": "monamour.mp4",
+      "src": "/canciones/monamour.mp4"
+    },
+    {
+      "numero": 24,
+      "archivo": "titimepregunto.mp4",
+      "src": "/canciones/titimepregunto.mp4"
+    },
+    {
+      "numero": 25,
+      "archivo": "zapatillas.mp4",
+      "src": "/canciones/zapatillas.mp4"
+    },
+    {
+      "numero": 26,
+      "archivo": "taconesrojos.mp4",
+      "src": "/canciones/taconesrojos.mp4"
+    },
+    {
+      "numero": 27,
+      "archivo": "nothinggonastopnow.mp4",
+      "src": "/canciones/nothinggonastopnow.mp4"
+    },
+    {
+      "numero": 28,
+      "archivo": "pepas.mp4",
+      "src": "/canciones/pepas.mp4"
+    },
+    {
+      "numero": 29,
+      "archivo": "tododeti.mp4",
+      "src": "/canciones/tododeti.mp4"
+    },
+    {
+      "numero": 30,
+      "archivo": "cuandozarpaelamor.mp4",
+      "src": "/canciones/cuandozarpaelamor.mp4"
+    },
+    {
+      "numero": 31,
+      "archivo": "abretumente.mp4",
+      "src": "/canciones/abretumente.mp4"
+    },
+    {
+      "numero": 32,
+      "archivo": "therythimontenight.mp4",
+      "src": "/canciones/therythimontenight.mp4"
+    },
+    {
+      "numero": 33,
+      "archivo": "mecoleenunafiesta.mp4",
+      "src": "/canciones/mecoleenunafiesta.mp4"
+    },
+    {
+      "numero": 34,
+      "archivo": "yonotepidolaluna.mp4",
+      "src": "/canciones/yonotepidolaluna.mp4"
+    },
+    {
+      "numero": 35,
+      "archivo": "cuandobrilleelesol.mp4",
+      "src": "/canciones/cuandobrilleelesol.mp4"
+    },
+    {
+      "numero": 36,
+      "archivo": "hayqueveniralsur.mp4",
+      "src": "/canciones/hayqueveniralsur.mp4"
+    },
+    {
+      "numero": 37,
+      "archivo": "aquienleimporta.mp4",
+      "src": "/canciones/aquienleimporta.mp4"
+    },
+    {
+      "numero": 38,
+      "archivo": "vivirasiesmorirdeamor.mp4",
+      "src": "/canciones/vivirasiesmorirdeamor.mp4"
+    },
+    {
+      "numero": 39,
+      "archivo": "seiluminaba.mp4",
+      "src": "/canciones/seiluminaba.mp4"
+    },
+    {
+      "numero": 40,
+      "archivo": "queladetengan.mp4",
+      "src": "/canciones/queladetengan.mp4"
+    },
+    {
+      "numero": 41,
+      "archivo": "littyloscochesdelpasado.mp4",
+      "src": "/canciones/littyloscochesdelpasado.mp4"
+    },
+    {
+      "numero": 42,
+      "archivo": "unbesoyunaflor.mp4",
+      "src": "/canciones/unbesoyunaflor.mp4"
+    },
+    {
+      "numero": 43,
+      "archivo": "nodudaria.mp4",
+      "src": "/canciones/nodudaria.mp4"
+    },
+    {
+      "numero": 44,
+      "archivo": "corazoncontento.mp4",
+      "src": "/canciones/corazoncontento.mp4"
+    },
+    {
+      "numero": 45,
+      "archivo": "mayores.mp4",
+      "src": "/canciones/mayores.mp4"
+    },
+    {
+      "numero": 46,
+      "archivo": "juntos.mp4",
+      "src": "/canciones/juntos.mp4"
+    },
+    {
+      "numero": 47,
+      "archivo": "caminandoporlavida.mp4",
+      "src": "/canciones/caminandoporlavida.mp4"
+    },
+    {
+      "numero": 48,
+      "archivo": "holdingoutforahero.mp4",
+      "src": "/canciones/holdingoutforahero.mp4"
+    },
+    {
+      "numero": 49,
+      "archivo": "boys.mp4",
+      "src": "/canciones/boys.mp4"
+    },
+    {
+      "numero": 50,
+      "archivo": "felicita.mp4",
+      "src": "/canciones/felicita.mp4"
+    },
+    {
+      "numero": 51,
+      "archivo": "ginza.mp4",
+      "src": "/canciones/ginza.mp4"
+    },
+    {
+      "numero": 52,
+      "archivo": "venezia.mp4",
+      "src": "/canciones/venezia.mp4"
+    },
+    {
+      "numero": 53,
+      "archivo": "Duncan Dhu - En Algún Lugar.mp4",
+      "src": "/canciones/Duncan%20Dhu%20-%20En%20Alg%C3%BAn%20Lugar.mp4"
+    },
+    {
+      "numero": 54,
+      "archivo": "intothegrove.mp4",
+      "src": "/canciones/intothegrove.mp4"
+    },
+    {
+      "numero": 55,
+      "archivo": "pamadrid.mp4",
+      "src": "/canciones/pamadrid.mp4"
+    },
+    {
+      "numero": 56,
+      "archivo": "maniac.mp4",
+      "src": "/canciones/maniac.mp4"
+    },
+    {
+      "numero": 57,
+      "archivo": "laflaca.mp4",
+      "src": "/canciones/laflaca.mp4"
+    },
+    {
+      "numero": 58,
+      "archivo": "starship.mp4",
+      "src": "/canciones/starship.mp4"
+    },
+    {
+      "numero": 59,
+      "archivo": "quijote.mp4",
+      "src": "/canciones/quijote.mp4"
+    },
+    {
+      "numero": 60,
+      "archivo": "ella.mp4",
+      "src": "/canciones/ella.mp4"
+    },
+    {
+      "numero": 61,
+      "archivo": "voyamil.mp4",
+      "src": "/canciones/voyamil.mp4"
+    },
+    {
+      "numero": 62,
+      "archivo": "rayosdesol.mp4",
+      "src": "/canciones/rayosdesol.mp4"
+    },
+    {
+      "numero": 63,
+      "archivo": "rythmisadancer.mp4",
+      "src": "/canciones/rythmisadancer.mp4"
+    },
+    {
+      "numero": 64,
+      "archivo": "saturdaynight.mp4",
+      "src": "/canciones/saturdaynight.mp4"
+    },
+    {
+      "numero": 65,
+      "archivo": "danzakuduro.mp4",
+      "src": "/canciones/danzakuduro.mp4"
+    },
+    {
+      "numero": 66,
+      "archivo": "seraporqueteamo.mp4",
+      "src": "/canciones/seraporqueteamo.mp4"
+    },
+    {
+      "numero": 67,
+      "archivo": "teniatantoquedarte.mp4",
+      "src": "/canciones/teniatantoquedarte.mp4"
+    },
+    {
+      "numero": 68,
+      "archivo": "baby.mp4",
+      "src": "/canciones/baby.mp4"
+    },
+    {
+      "numero": 69,
+      "archivo": "sarandonga.mp4",
+      "src": "/canciones/sarandonga.mp4"
+    },
+    {
+      "numero": 70,
+      "archivo": "nocontroles.mp4",
+      "src": "/canciones/nocontroles.mp4"
+    },
+    {
+      "numero": 71,
+      "archivo": "niunasolapalabra.mp4",
+      "src": "/canciones/niunasolapalabra.mp4"
+    },
+    {
+      "numero": 72,
+      "archivo": "loba.mp4",
+      "src": "/canciones/loba.mp4"
+    },
+    {
+      "numero": 73,
+      "archivo": "hungup.mp4",
+      "src": "/canciones/hungup.mp4"
+    },
+    {
+      "numero": 74,
+      "archivo": "puedescontarconmigo.mp4",
+      "src": "/canciones/puedescontarconmigo.mp4"
+    },
+    {
+      "numero": 75,
+      "archivo": "sondeamores.mp4",
+      "src": "/canciones/sondeamores.mp4"
+    },
+    {
+      "numero": 76,
+      "archivo": "girlsjustwanttohavefun.mp4",
+      "src": "/canciones/girlsjustwanttohavefun.mp4"
+    },
+    {
+      "numero": 77,
+      "archivo": "cachoacacho.mp4",
+      "src": "/canciones/cachoacacho.mp4"
+    },
+    {
+      "numero": 78,
+      "archivo": "dancingqueen.mp4",
+      "src": "/canciones/dancingqueen.mp4"
+    },
+    {
+      "numero": 79,
+      "archivo": "memuero.mp4",
+      "src": "/canciones/memuero.mp4"
+    },
+    {
+      "numero": 80,
+      "archivo": "besos.mp4",
+      "src": "/canciones/besos.mp4"
+    },
+    {
+      "numero": 81,
+      "archivo": "sweetdreams.mp4",
+      "src": "/canciones/sweetdreams.mp4"
+    },
+    {
+      "numero": 82,
+      "archivo": "itsmylife.mp4",
+      "src": "/canciones/itsmylife.mp4"
+    },
+    {
+      "numero": 83,
+      "archivo": "colgandoentusmanos.mp4",
+      "src": "/canciones/colgandoentusmanos.mp4"
+    },
+    {
+      "numero": 84,
+      "archivo": "hotancold.mp4",
+      "src": "/canciones/hotancold.mp4"
+    },
+    {
+      "numero": 85,
+      "archivo": "cuandozarpaelamor.mp4",
+      "src": "/canciones/cuandozarpaelamor.mp4"
+    },
+    {
+      "numero": 86,
+      "archivo": "iwanttobrakefree.mp4",
+      "src": "/canciones/iwanttobrakefree.mp4"
+    },
+    {
+      "numero": 87,
+      "archivo": "atrevete-te.mp4",
+      "src": "/canciones/atrevete-te.mp4"
+    },
+    {
+      "numero": 88,
+      "archivo": "yoquierobailar.mp4",
+      "src": "/canciones/yoquierobailar.mp4"
+    },
+    {
+      "numero": 89,
+      "archivo": "comopueddistehacermeestoami.mp4",
+      "src": "/canciones/comopueddistehacermeestoami.mp4"
+    },
+    {
+      "numero": 90,
+      "archivo": "bornthisway.mp4",
+      "src": "/canciones/bornthisway.mp4"
+    },
+    {
+      "numero": 91,
+      "archivo": "pumpupthejam.mp4",
+      "src": "/canciones/pumpupthejam.mp4"
+    },
+    {
+      "numero": 92,
+      "archivo": "freedfromdesire.mp4",
+      "src": "/canciones/freedfromdesire.mp4"
+    },
+    {
+      "numero": 93,
+      "archivo": "dancingwithmyself.mp4",
+      "src": "/canciones/dancingwithmyself.mp4"
+    },
+    {
+      "numero": 94,
+      "archivo": "everybody.mp4",
+      "src": "/canciones/everybody.mp4"
+    },
+    {
+      "numero": 95,
+      "archivo": "billiejean.mp4",
+      "src": "/canciones/billiejean.mp4"
+    },
+    {
+      "numero": 96,
+      "archivo": "heartofglass.mp4",
+      "src": "/canciones/heartofglass.mp4"
+    },
+    {
+      "numero": 97,
+      "archivo": "despecha.mp4",
+      "src": "/canciones/despecha.mp4"
+    },
+    {
+      "numero": 98,
+      "archivo": "maquillaje.mp4",
+      "src": "/canciones/maquillaje.mp4"
+    },
+    {
+      "numero": 99,
+      "archivo": "physical.mp4",
+      "src": "/canciones/physical.mp4"
+    }
+  ]
+}

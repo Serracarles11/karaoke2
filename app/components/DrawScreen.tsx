@@ -89,46 +89,48 @@ export default function DrawScreen() {
           </div>
         ) : null}
 
-        <div className="tv-draw-center absolute bottom-[clamp(22px,3vh,34px)] left-1/2 flex w-[min(86vw,58rem)] -translate-x-1/2 flex-col items-center gap-[clamp(10px,1vw,18px)]">
-          <button
-            type="button"
-            onClick={spinBall}
-            disabled={isSpinning || remainingNumbers.length === 0}
-            className="rounded-full bg-[linear-gradient(135deg,#ffd36b,#ff8c59)] px-[clamp(24px,2.2vw,38px)] py-[clamp(12px,1.25vw,18px)] text-[clamp(0.95rem,1.15vw,1.2rem)] font-black text-[#1f1305] shadow-[0_10px_40px_rgba(255,146,89,0.32)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-45"
-          >
-            {remainingNumbers.length === 0
-              ? "No quedan bolas"
-              : isSpinning
-                ? "Eligiendo bola..."
-                : "Sacar bola"}
-          </button>
+        <div className="absolute inset-x-0 bottom-[clamp(22px,3vh,34px)] px-4">
+          <div className="tv-draw-center mx-auto flex w-full max-w-[58rem] flex-col items-center gap-[clamp(10px,1vw,18px)]">
+            <button
+              type="button"
+              onClick={spinBall}
+              disabled={isSpinning || remainingNumbers.length === 0}
+              className="rounded-full bg-[linear-gradient(135deg,#ffd36b,#ff8c59)] px-[clamp(24px,2.2vw,38px)] py-[clamp(12px,1.25vw,18px)] text-[clamp(0.95rem,1.15vw,1.2rem)] font-black text-[#1f1305] shadow-[0_10px_40px_rgba(255,146,89,0.32)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              {remainingNumbers.length === 0
+                ? "No quedan bolas"
+                : isSpinning
+                  ? "Eligiendo bola..."
+                  : "Sacar bola"}
+            </button>
 
-          {currentNumber !== null && selectedSong ? (
-            <div className="w-full text-center">
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => router.push("/videoclip")}
-                  className="tv-glass-button rounded-full border border-[#ffd36b]/36 bg-[#ffd36b]/16 px-[clamp(18px,1.5vw,24px)] py-[clamp(10px,1vw,14px)] text-[clamp(0.82rem,0.95vw,1rem)] font-black text-[#fff0be] shadow-[0_10px_40px_rgba(0,0,0,0.25)] backdrop-blur-sm transition hover:bg-[#ffd36b]/22"
-                >
-                  Ir al videoclip
-                </button>
-                <button
-                  type="button"
-                  onClick={() => router.push("/")}
-                  className="tv-glass-button rounded-full border border-white/14 bg-white/8 px-[clamp(18px,1.5vw,24px)] py-[clamp(10px,1vw,14px)] text-[clamp(0.82rem,0.95vw,1rem)] font-semibold text-white/84 shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-sm transition hover:bg-white/12 disabled:cursor-not-allowed disabled:opacity-45"
-                >
-                  Pantalla de carga
-                </button>
+            {currentNumber !== null && selectedSong ? (
+              <div className="w-full text-center">
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => router.push("/videoclip")}
+                    className="tv-glass-button rounded-full border border-[#ffd36b]/36 bg-[#ffd36b]/16 px-[clamp(18px,1.5vw,24px)] py-[clamp(10px,1vw,14px)] text-[clamp(0.82rem,0.95vw,1rem)] font-black text-[#fff0be] shadow-[0_10px_40px_rgba(0,0,0,0.25)] backdrop-blur-sm transition hover:bg-[#ffd36b]/22"
+                  >
+                    Ir al videoclip
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => router.push("/")}
+                    className="tv-glass-button rounded-full border border-white/14 bg-white/8 px-[clamp(18px,1.5vw,24px)] py-[clamp(10px,1vw,14px)] text-[clamp(0.82rem,0.95vw,1rem)] font-semibold text-white/84 shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-sm transition hover:bg-white/12 disabled:cursor-not-allowed disabled:opacity-45"
+                  >
+                    Pantalla de carga
+                  </button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="w-full text-center">
-              <p className="text-[clamp(0.85rem,1vw,1rem)] leading-[1.6] text-white/66 [text-shadow:0_3px_18px_rgba(0,0,0,0.42)]">
-                El acceso al videoclip aparecera cuando ya haya salido una bola.
-              </p>
-            </div>
-          )}
+            ) : (
+              <div className="w-full text-center">
+                <p className="text-[clamp(0.85rem,1vw,1rem)] leading-[1.6] text-white/66 [text-shadow:0_3px_18px_rgba(0,0,0,0.42)]">
+                  El acceso al videoclip aparecera cuando ya haya salido una bola.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="absolute bottom-[clamp(18px,2.4vh,30px)] left-[clamp(16px,2vw,40px)] max-w-[min(28vw,26rem)]">
