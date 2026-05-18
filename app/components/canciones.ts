@@ -254,3 +254,106 @@ export function construirCancion(raw: string, numero: number): Cancion {
 export const canciones: Cancion[] = LISTA_CANCIONES.map((raw, numero) =>
   construirCancion(raw, numero),
 );
+
+export const LOCAL_VIDEO_FILES: Partial<Record<number, string>> = {
+  0:  "unanochemas.mp4",            // Jennifer Lopez - Una Noche Más
+  1:  "laplena.mp4",                // W Sound Beéle - La Plena
+  2:  "lamarinastamorena.mp4",      // Figa Flawas - La Marina Sta Morena
+  3:  "esadiva.mp4",                // Melody - Esa Diva
+  4:  "unanocheconhugel.mp4",       // HUGEL - Una Noche con Hugel
+  5:  "capazvswefoundlove.mp4",     // Vilu Gontero - Capaz vs We Found Love
+  6:  "antesmuertaquesencilla.mp4", // María Isabel - Antes Muerta Que Sencilla
+  7:  "mrvain.mp4",                 // Culture Beat - Mr. Vain
+  8:  "mehasinvitadoabailar.mp4",   // Dani Fernández - Me Has Invitado a Bailar
+  9:  "siantestehubieraconocido.mp4", // KAROL G - Si Antes Te Hubiera Conocido
+  10: "lareina.mp4",                // Lola Indigo - La Reina
+  11: "vivelavida.mp4",             // Gusanito - Vive La Vida
+  12: "zorra.mp4",                  // Nebulossa - Zorra
+  13: "cuandoelmartetenga.mp4",     // El Último de la Fila - Cuando el Mar te Tenga
+  14: "malamujer.mp4",              // C Tangana - Mala Mujer
+  15: "lamorocha.mp4",              // Luck Ra BM - La Morocha
+  16: "gasolina.mp4",               // Daddy Yankee - Gasolina
+  17: "vagabundo.mp4",              // Sebastián Yatra Manuel Turizo - Vagabundo
+  18: "elmerengue.mp4",             // Marshmello Manuel Turizo - El Merengue
+  19: "cotixcoti.mp4",              // The Tyets - Coti x Coti
+  20: "nocheentera.mp4",            // Vicco - Nochentera
+  21: "labilirrubina.mp4",          // Juan Luis Guerra - La Bilirrubina
+  22: "mariposas.mp4",              // sangiovanni Aitana - Mariposas
+  23: "monamour.mp4",               // Zzoilo Aitana - Mon Amour Remix
+  24: "titimepregunto.mp4",         // Bad Bunny - Tití Me Preguntó
+  25: "zapatillas.mp4",             // El Canto del Loco - Zapatillas
+  26: "taconesrojos.mp4",           // Sebastián Yatra - Tacones Rojos
+  27: "nothinggonastopnow.mp4",     // Starship - Nothing's Gonna Stop Us Now
+  28: "pepas.mp4",                  // Farruko - Pepas
+  29: "tododeti.mp4",               // Rauw Alejandro - Todo de Ti
+  30: "cuandozarpaelamor.mp4",      // Camela - Cuando Zarpa el Amor
+  31: "abretumente.mp4",            // Merche - Abre Tu Mente
+  32: "therythimontenight.mp4",     // Corona - The Rhythm of the Night
+  33: "mecoleenunafiesta.mp4",      // Mecano - Me Colé en una Fiesta
+  34: "yonotepidolaluna.mp4",       // Daniela Romo - Yo No Te Pido La Luna
+  35: "cuandobrilleelesol.mp4",     // La Guardia - Cuando Brille el Sol
+  36: "hayqueveniralsur.mp4",       // Raffaella Carrá - Hay Que Venir al Sur
+  37: "aquienleimporta.mp4",        // Alaska y Dinarama - A Quién Le Importa
+  38: "vivirasiesmorirdeamor.mp4",  // Camilo Sesto - Vivir Así es Morir de Amor
+  39: "seiluminaba.mp4",            // Fred De Palma Ana Mena - Se Iluminaba
+  40: "queladetengan.mp4",          // David Civera - Que La Detengan
+  41: "littyloscochesdelpasado.mp4", // Ladilla Rusa - KITT y los Coches del Pasado
+  42: "unbesoyunaflor.mp4",         // Nino Bravo - Un Beso y Una Flor
+  43: "nodudaria.mp4",              // Antonio Flores - No Dudaría
+  44: "corazoncontento.mp4",        // Marisol - Tengo el Corazón Contento
+  45: "mayores.mp4",                // Becky G Bad Bunny - Mayores
+  46: "juntos.mp4",                 // Paloma San Basilio - Juntos
+  47: "caminandoporlavida.mp4",     // Melendi - Caminando por la Vida
+  48: "holdingoutforahero.mp4",     // Bonnie Tyler - Holding Out For A Hero
+  49: "boys.mp4",                   // Sabrina - Boys Summertime Love
+  50: "felicita.mp4",               // Al Bano Romina Power - Felicitá
+  51: "ginza.mp4",                  // J Balvin - Ginza
+  52: "venezia.mp4",                // Hombres G - Venezia
+  53: "Duncan Dhu - En Algún Lugar.mp4", // Duncan Dhu - En Algún Lugar
+  54: "intothegrove.mp4",           // Madonna - Into The Groove
+  55: "pamadrid.mp4",               // El Barrio - Pa Madrid
+  56: "maniac.mp4",                 // Michael Sembello - Maniac
+  57: "laflaca.mp4",                // Jarabe de Palo - La Flaca
+  58: "starship.mp4",               // Nicki Minaj - Starships
+  59: "quijote.mp4",                // Julio Iglesias - Quijote
+  60: "ella.mp4",                   // Viceversa - Tu Piel Morena
+  61: "voyamil.mp4",                // Olé Olé - Voy a Mil
+  62: "rayosdesol.mp4",             // Jose De Rico Henry Mendez - Rayos de Sol
+  63: "rythmisadancer.mp4",         // SNAP! - Rhythm Is A Dancer
+  64: "saturdaynight.mp4",          // Whigfield - Saturday Night
+  65: "danzakuduro.mp4",            // Don Omar Lucenzo - Danza Kuduro
+  66: "seraporqueteamo.mp4",        // Ricchi e Poveri - Será Porque Te Amo
+  67: "teniatantoquedarte.mp4",     // Nena Daconte - Tenía Tanto Que Darte
+  68: "baby.mp4",                   // Justin Bieber - Baby
+  69: "sarandonga.mp4",             // Lolita - Sarandonga
+  70: "nocontroles.mp4",            // Olé Olé - No Controles
+  71: "niunasolapalabra.mp4",       // Paulina Rubio - Ni Una Sola Palabra
+  72: "loba.mp4",                   // Shakira - Loba
+  73: "hungup.mp4",                 // Madonna - Hung Up
+  74: "puedescontarconmigo.mp4",    // La Oreja de Van Gogh - Puedes Contar Conmigo
+  75: "sondeamores.mp4",            // Andy y Lucas - Son de Amores
+  76: "girlsjustwanttohavefun.mp4", // Cyndi Lauper - Girls Just Want To Have Fun
+  77: "cachoacacho.mp4",            // Estopa - Cacho a Cacho
+  78: "dancingqueen.mp4",           // ABBA - Dancing Queen
+  79: "memuero.mp4",                // La Quinta Estación - Me Muero
+  80: "besos.mp4",                  // El Canto del Loco - Besos
+  81: "sweetdreams.mp4",            // La Bouche - Sweet Dreams
+  82: "itsmylife.mp4",              // Bon Jovi - It's My Life
+  83: "colgandoentusmanos.mp4",     // Carlos Baute Marta Sánchez - Colgando en Tus Manos
+  84: "hotancold.mp4",              // Katy Perry - Hot N Cold
+  85: "cuandozarpaelamor.mp4",      // Camela - Cuando Zarpa el Amor (segunda entrada)
+  86: "iwanttobrakefree.mp4",       // Queen - I Want To Break Free
+  87: "atrevete-te.mp4",            // Calle 13 - Atrévete Te Te
+  88: "yoquierobailar.mp4",         // Sonia y Selena - Yo Quiero Bailar
+  89: "comopueddistehacermeestoami.mp4", // Alaska y Dinarama - Cómo Pudiste Hacerme Esto a Mí
+  90: "bornthisway.mp4",            // Lady Gaga - Born This Way
+  91: "pumpupthejam.mp4",           // Technotronic - Pump Up The Jam
+  92: "freedfromdesire.mp4",        // Gala - Freed From Desire
+  93: "dancingwithmyself.mp4",      // Billy Idol - Dancing With Myself
+  94: "everybody.mp4",              // Backstreet Boys - Everybody
+  95: "billiejean.mp4",             // Michael Jackson - Billie Jean
+  96: "heartofglass.mp4",           // Miley Cyrus - Heart of Glass
+  97: "despecha.mp4",               // Rosalía - Despechá
+  98: "maquillaje.mp4",             // Mecano - Maquillaje
+  99: "physical.mp4",               // Dua Lipa - Physical
+};

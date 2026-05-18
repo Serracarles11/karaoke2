@@ -2,8 +2,15 @@ import { mkdir, readdir } from "node:fs/promises";
 import path from "node:path";
 import { spawn } from "node:child_process";
 
-const INPUT_DIR = path.resolve(process.cwd(), "downloads", "canciones");
-const OUTPUT_DIR = path.resolve(process.cwd(), "downloads", "canciones-normalizadas");
+const [inputDirArg, outputDirArg] = process.argv.slice(2);
+const INPUT_DIR = path.resolve(
+  process.cwd(),
+  inputDirArg ?? path.join("downloads", "canciones"),
+);
+const OUTPUT_DIR = path.resolve(
+  process.cwd(),
+  outputDirArg ?? path.join("downloads", "canciones-normalizadas"),
+);
 
 // Recorte por defecto para capturas verticales con interfaz de movil.
 // Ajuste pensado para dejar visible la letra y eliminar barras superior/inferior.
@@ -143,6 +150,9 @@ async function normalizeVideo(fileName: string) {
 
 async function main() {
   await mkdir(OUTPUT_DIR, { recursive: true });
+
+  console.log(`Entrada: ${INPUT_DIR}`);
+  console.log(`Salida: ${OUTPUT_DIR}`);
 
   const files = (await readdir(INPUT_DIR))
     .filter((file) => file.toLowerCase().endsWith(".mp4"))

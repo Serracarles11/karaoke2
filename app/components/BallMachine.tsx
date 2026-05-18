@@ -18,6 +18,7 @@ type BallMachineProps = {
 };
 
 const BALL_RADIUS = 28;
+const SELECTED_BALL_RADIUS = 86;
 const WALL_THICKNESS = 160;
 const BASE_SPEED = 5.1;
 
@@ -51,11 +52,15 @@ function drawBall(
   ctx: CanvasRenderingContext2D,
   body: Body,
   state: "normal" | "active" | "selected" | "drawn",
+  animationMs = 0,
 ) {
   const { x, y } = body.position;
   const ballNumber = Number(body.label);
   const label = body.label.padStart(2, "0");
-  const radius = state === "selected" ? 54 : BALL_RADIUS;
+  const radius = state === "selected" ? SELECTED_BALL_RADIUS : BALL_RADIUS;
+  const floatOffsetY = state === "selected" ? Math.sin(animationMs / 240) * 10 : 0;
+  const swayRotation = state === "selected" ? Math.sin(animationMs / 420) * 0.08 : 0;
+  const pulseScale = state === "selected" ? 1 + Math.sin(animationMs / 260) * 0.035 : 1;
 
   const accent =
     ballNumber <= 19
@@ -69,8 +74,9 @@ function drawBall(
             : { light: "#e5b8ff", mid: "#c026d3", dark: "#6b21a8" };
 
   ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(body.angle);
+  ctx.translate(x, y + floatOffsetY);
+  ctx.rotate(body.angle + swayRotation);
+  ctx.scale(pulseScale, pulseScale);
 
   if (state === "active") {
     const halo = ctx.createRadialGradient(0, 0, radius * 0.6, 0, 0, radius + 18);
@@ -146,13 +152,13 @@ function drawBall(
     ctx.shadowBlur = 16;
   }
 
-  ctx.font = `900 ${state === "selected" ? 24 : 18}px sans-serif`;
+  ctx.font = `900 ${state === "selected" ? 38 : 18}px sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillStyle = "#111111";
   ctx.shadowColor = "rgba(255,255,255,0.12)";
   ctx.shadowBlur = 4;
-  ctx.fillText(label, 0, state === "selected" ? 2 : 1);
+  ctx.fillText(label, 0, state === "selected" ? 3 : 1);
 
   ctx.restore();
 }
@@ -345,11 +351,16 @@ export default function BallMachine({
       if (selectedBody) {
         const target = {
           x: width * 0.5,
-          y: height * 0.42,
+          y: height * 0.48,
         };
         const otherBodies = Array.from(bodiesRef.current.entries())
-          .filter(([id]) => id !== selectedNumber)
+          .filter(([id]) => id !== selectedNumber && !drawnNumbersRef.current.has(id))
           .sort((a, b) => a[0] - b[0]);
+        const hiddenDrawnIds = new Set(
+          Array.from(bodiesRef.current.keys()).filter(
+            (id) => id !== selectedNumber && drawnNumbersRef.current.has(id),
+          ),
+        );
         const sideBodies = Math.ceil(otherBodies.length / 2);
         const topPadding = Math.max(170, Math.floor(height * 0.2));
         const bottomPadding = Math.max(72, Math.floor(height * 0.08));
@@ -393,6 +404,13 @@ export default function BallMachine({
             Body.setPosition(body, {
               x: body.position.x + (target.x - body.position.x) * 0.04,
               y: body.position.y + (target.y - body.position.y) * 0.04,
+            });
+          } else if (hiddenDrawnIds.has(id)) {
+            Body.setVelocity(body, { x: 0, y: 0 });
+            Body.setAngularVelocity(body, 0);
+            Body.setPosition(body, {
+              x: -WALL_THICKNESS,
+              y: -WALL_THICKNESS,
             });
           } else {
             if (body.isStatic) {
@@ -593,6 +611,10 @@ export default function BallMachine({
           continue;
         }
 
+        if (selectedNumberRef.current !== null && drawnNumbersRef.current.has(id)) {
+          continue;
+        }
+
         if (id === activeNumberRef.current) {
           activeBody = body;
           continue;
@@ -605,15 +627,15 @@ export default function BallMachine({
       }
 
       for (const { body, state } of normalBodies) {
-        drawBall(ctx, body, state);
+        drawBall(ctx, body, state, timestamp);
       }
 
       if (activeBody) {
-        drawBall(ctx, activeBody, "active");
+        drawBall(ctx, activeBody, "active", timestamp);
       }
 
       if (selectedBody) {
-        drawBall(ctx, selectedBody, "selected");
+        drawBall(ctx, selectedBody, "selected", timestamp);
       }
 
       frameRef.current = requestAnimationFrame(render);

@@ -45,12 +45,14 @@ export default function DetailScreen() {
   }, [selectedSong?.numero]);
 
   useEffect(() => {
+    const audioElements = audioRefs.current;
+
     return () => {
       if (stopSoundTimeoutRef.current !== null) {
         window.clearTimeout(stopSoundTimeoutRef.current);
       }
 
-      for (const audio of Object.values(audioRefs.current)) {
+      for (const audio of Object.values(audioElements)) {
         if (!audio) continue;
         audio.pause();
         audio.currentTime = 0;
@@ -115,7 +117,7 @@ export default function DetailScreen() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,129,86,0.14),transparent_32%),radial-gradient(circle_at_80%_20%,rgba(91,163,255,0.16),transparent_30%),linear-gradient(180deg,rgba(5,10,20,0.34),rgba(5,10,20,0.92))]" />
 
       <div className="relative z-10 mx-auto h-dvh max-w-[1800px] overflow-hidden px-[clamp(14px,1.8vw,30px)] py-[clamp(14px,1.8vw,30px)]">
-        <section className="grid h-[calc(100dvh-clamp(28px,3.6vw,60px))] gap-[clamp(12px,1.15vw,22px)] overflow-hidden lg:grid-cols-[1.26fr_1.34fr_0.64fr]">
+        <section className="grid h-[calc(100dvh-clamp(28px,3.6vw,60px))] gap-[clamp(12px,1.15vw,22px)] overflow-hidden lg:grid-cols-[1.1fr_1.6fr_0.56fr]">
           <PanelCard className="flex h-full min-h-0 flex-col overflow-hidden">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
@@ -128,7 +130,7 @@ export default function DetailScreen() {
               </div>
               <div className="flex shrink-0 flex-wrap justify-end gap-2">
                 <Link
-                  href="/"
+                  href="/bombo"
                   className="rounded-full bg-white/8 px-[clamp(14px,1.1vw,20px)] py-[clamp(8px,0.8vw,12px)] text-[clamp(0.8rem,0.9vw,0.98rem)] font-semibold text-white/82 transition hover:bg-white/12"
                 >
                   Volver al bombo
@@ -197,16 +199,17 @@ export default function DetailScreen() {
               </div>
             </div>
 
-            <div className="mt-[clamp(12px,1vw,18px)] min-h-0 flex-1 overflow-hidden rounded-4xl bg-[#ff4fa0]">
-              <div className="relative h-full">
+            <div className="mt-[clamp(8px,0.7vw,14px)] min-h-0 flex-1 overflow-hidden rounded-4xl">
+              <div className="relative h-full overflow-hidden bg-black" style={{ isolation: "isolate" }}>
                 {selectedSong && downloadedNumbers.includes(selectedSong.numero) ? (
                   <video
                     ref={songVideoRef}
                     key={selectedSong.numero}
                     src={`/api/video/${selectedSong.numero}`}
                     preload="auto"
-                    className="h-full w-full object-cover"
-                    style={{ filter: "grayscale(1) brightness(1.15) contrast(1.8)", backgroundColor: "#000" }}
+                    className="mx-auto h-[106%] w-[92%] scale-x-[0.9] object-fill"
+                    playsInline
+                    style={{ backgroundColor: "#000" }}
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center px-8 text-center text-white/56">
@@ -215,14 +218,10 @@ export default function DetailScreen() {
                     </p>
                   </div>
                 )}
-                <div
-                  className="pointer-events-none absolute inset-0"
-                  style={{ backgroundColor: "#ff4fa0", mixBlendMode: "lighten" }}
-                />
               </div>
             </div>
 
-            <div className="mt-[clamp(12px,1vw,18px)] flex flex-wrap gap-3">
+            <div className="mt-[clamp(8px,0.7vw,14px)] flex flex-wrap gap-3">
               <button
                 type="button"
                 onClick={playSong}

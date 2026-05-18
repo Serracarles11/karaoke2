@@ -75,6 +75,20 @@ export default function DrawScreen() {
           </button>
         </div>
 
+        {currentNumber !== null && selectedSong ? (
+          <div className="absolute left-1/2 top-[clamp(18px,2.2vw,42px)] z-10 w-[min(78vw,72rem)] -translate-x-1/2 px-4 text-center">
+            <p className="text-[clamp(11px,0.82vw,14px)] uppercase tracking-[0.42em] text-[#ffd58a]/76 [text-shadow:0_2px_18px_rgba(0,0,0,0.45)]">
+              Cancion Elegida
+            </p>
+            <p className="mt-3 text-[clamp(2rem,3.8vw,4.4rem)] font-black leading-[0.94] tracking-[-0.08em] text-white [text-shadow:0_5px_28px_rgba(0,0,0,0.62)]">
+              {selectedSong.titulo}
+            </p>
+            <p className="mt-2 text-[clamp(0.95rem,1.15vw,1.2rem)] font-medium text-white/76 [text-shadow:0_3px_18px_rgba(0,0,0,0.42)]">
+              {selectedSong.artista}
+            </p>
+          </div>
+        ) : null}
+
         <div className="absolute bottom-[clamp(22px,3vh,34px)] left-1/2 flex w-[min(86vw,58rem)] -translate-x-1/2 flex-col items-center gap-[clamp(10px,1vw,18px)]">
           <button
             type="button"
@@ -91,20 +105,7 @@ export default function DrawScreen() {
 
           {currentNumber !== null && selectedSong ? (
             <div className="w-full text-center">
-              <p className="text-[clamp(10px,0.78vw,13px)] uppercase tracking-[0.42em] text-[#ffd58a]/76 [text-shadow:0_2px_18px_rgba(0,0,0,0.45)]">
-                Bola Elegida
-              </p>
-              <p className="mt-2 text-[clamp(2.75rem,5.2vw,6rem)] font-black leading-none tracking-[-0.08em] text-[#fff0be] [text-shadow:0_4px_24px_rgba(0,0,0,0.58)]">
-                {formatearNumero(currentNumber)}
-              </p>
-              <p className="mt-[clamp(8px,0.9vw,14px)] text-[clamp(1.2rem,1.9vw,2rem)] font-bold text-white [text-shadow:0_4px_24px_rgba(0,0,0,0.55)]">
-                {selectedSong.titulo}
-              </p>
-              <p className="mt-1 text-[clamp(0.85rem,1vw,1rem)] text-white/72 [text-shadow:0_3px_18px_rgba(0,0,0,0.42)]">
-                {selectedSong.artista}
-              </p>
-
-              <div className="mt-[clamp(12px,1.1vw,20px)] flex flex-wrap items-center justify-center gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-3">
                 <button
                   type="button"
                   onClick={() => router.push("/videoclip")}
@@ -114,11 +115,10 @@ export default function DrawScreen() {
                 </button>
                 <button
                   type="button"
-                  onClick={spinBall}
-                  disabled={isSpinning || remainingNumbers.length === 0}
+                  onClick={() => router.push("/")}
                   className="rounded-full border border-white/14 bg-white/8 px-[clamp(18px,1.5vw,24px)] py-[clamp(10px,1vw,14px)] text-[clamp(0.82rem,0.95vw,1rem)] font-semibold text-white/84 shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-sm transition hover:bg-white/12 disabled:cursor-not-allowed disabled:opacity-45"
                 >
-                  Sacar otra bola
+                  Pantalla de carga
                 </button>
               </div>
             </div>

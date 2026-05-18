@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
+import { LOCAL_VIDEO_FILES } from "@/app/components/canciones";
 
 const CANCIONES_DIR = path.resolve(process.cwd(), "downloads", "canciones");
 const TMP_DIR = path.resolve(process.cwd(), "downloads", ".tmp-canciones");
@@ -22,8 +23,9 @@ function leerNumerosDeDirectorio(dir: string, patron: RegExp): number[] {
 export function GET() {
   const descargadas = leerNumerosDeDirectorio(CANCIONES_DIR, /^(\d+)\s+-\s+/);
   const descargando = leerNumerosDeDirectorio(TMP_DIR, /^(\d+)-/);
+  const normalizadas = Object.keys(LOCAL_VIDEO_FILES).map(Number);
 
-  const numeros = [...new Set([...descargadas, ...descargando])].sort(
+  const numeros = [...new Set([...descargadas, ...descargando, ...normalizadas])].sort(
     (a, b) => a - b,
   );
 
