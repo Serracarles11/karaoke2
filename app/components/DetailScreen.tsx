@@ -3,15 +3,44 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { canciones } from "./canciones";
-import PixelCard from "./PixelCard";
 import { formatearNumero, useKaraokeGame } from "./useKaraokeGame";
 
 const SOUND_EFFECTS = [
-  { id: "dramatico", label: "Dramatico", src: "/sonidos/dramatico.mp3", durationMs: 3000 },
-  { id: "risa", label: "Risa", src: "/sonidos/risa.mp3", durationMs: 3000 },
-  { id: "grillos", label: "Grillos", src: "/sonidos/sonido-grillos.mp3", durationMs: 3000 },
-  { id: "tambores", label: "Tambores", src: "/sonidos/tambores.mp3", durationMs: 3000 },
-  { id: "triste", label: "Triste", src: "/sonidos/triste.mp3", durationMs: 5000 },
+  {
+    id: "dramatico",
+    label: "Dramatico",
+    src: "/sonidos/dramatico.mp3",
+    durationMs: 3000,
+    iconSrc: "/botones/drama.svg",
+  },
+  {
+    id: "risa",
+    label: "Risa",
+    src: "/sonidos/risa.mp3",
+    durationMs: 3000,
+    iconSrc: "/botones/risa.svg",
+  },
+  {
+    id: "grillos",
+    label: "Grillos",
+    src: "/sonidos/sonido-grillos.mp3",
+    durationMs: 3000,
+    iconSrc: "/botones/grillo.svg",
+  },
+  {
+    id: "tambores",
+    label: "Tambores",
+    src: "/sonidos/tambores.mp3",
+    durationMs: 3000,
+    iconSrc: "/botones/tambores.svg",
+  },
+  {
+    id: "triste",
+    label: "Triste",
+    src: "/sonidos/triste.mp3",
+    durationMs: 5000,
+    iconSrc: "/botones/triste.svg",
+  },
 ] as const;
 
 type CancionesManifest = {
@@ -125,15 +154,15 @@ export default function DetailScreen() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#08111f] text-white">
+    <main className="relative min-h-screen overflow-x-hidden bg-[#08111f] text-white">
       <div className="absolute inset-0 bg-[url('/fondo-bolas.webp')] bg-cover bg-center bg-no-repeat" />
 
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,129,86,0.14),transparent_32%),radial-gradient(circle_at_80%_20%,rgba(91,163,255,0.16),transparent_30%),linear-gradient(180deg,rgba(5,10,20,0.34),rgba(5,10,20,0.92))]" />
 
-      <div className="relative z-10 mx-auto h-dvh max-w-[1800px] overflow-hidden px-[clamp(14px,1.8vw,30px)] py-[clamp(14px,1.8vw,30px)]">
-        <section className="grid h-[calc(100dvh-clamp(28px,3.6vw,60px))] gap-[clamp(12px,1.15vw,22px)] overflow-hidden lg:grid-cols-[1.1fr_1.6fr_0.56fr]">
-          <PanelCard className="flex h-full min-h-0 flex-col overflow-hidden">
-            <div className="flex items-center justify-between gap-3">
+      <div className="relative z-10 mx-auto max-w-[1800px] px-[clamp(14px,1.8vw,30px)] py-[clamp(14px,1.8vw,30px)]">
+        <section className="grid min-h-screen gap-[clamp(12px,1.15vw,22px)] pb-4 lg:grid-cols-[1fr_1.3fr] xl:h-[calc(100vh-clamp(28px,3.6vw,60px))] xl:grid-cols-[1.08fr_1.45fr_0.72fr] xl:overflow-hidden">
+          <PanelCard className="flex min-h-0 flex-col overflow-hidden xl:h-full">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <p className="text-[clamp(10px,0.72vw,12px)] uppercase tracking-[0.32em] text-white/52">
                   Izquierda
@@ -142,7 +171,7 @@ export default function DetailScreen() {
                   Bolas Que Ya Han Salido
                 </h2>
               </div>
-              <div className="flex shrink-0 flex-wrap justify-end gap-2">
+              <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end">
                 <Link
                   href="/bombo"
                   className="rounded-full bg-white/8 px-[clamp(14px,1.1vw,20px)] py-[clamp(8px,0.8vw,12px)] text-[clamp(0.8rem,0.9vw,0.98rem)] font-semibold text-white/82 transition hover:bg-white/12"
@@ -160,7 +189,7 @@ export default function DetailScreen() {
             </div>
 
             <div className="mt-[clamp(12px,1vw,18px)] flex-1 min-h-0 rounded-[2rem] bg-[rgba(8,18,40,0.78)] p-[clamp(10px,0.9vw,16px)] shadow-[0_22px_60px_rgba(4,10,24,0.38)]">
-              <div className="grid h-full grid-cols-10 content-between gap-[clamp(5px,0.45vw,9px)]">
+              <div className="grid grid-cols-5 gap-[clamp(5px,0.45vw,9px)] sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:h-full xl:content-between">
                 {allNumbers.map((number) => {
                   const song = canciones[number];
                   const isDrawn = drawnNumbersSet.has(number);
@@ -190,20 +219,20 @@ export default function DetailScreen() {
             </div>
           </PanelCard>
 
-          <PanelCard className="flex h-full min-h-0 flex-col overflow-hidden">
-            <div className="flex items-center justify-between gap-4">
+          <PanelCard className="flex min-h-0 flex-col overflow-hidden xl:h-full">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="min-w-0">
                 <p className="text-[clamp(10px,0.72vw,12px)] uppercase tracking-[0.32em] text-[#ffd58a]/72">
                   Centro
                 </p>
-                <h2 className="mt-2 line-clamp-2 text-[clamp(1.35rem,2vw,2.6rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
+                <h2 className="mt-2 text-[clamp(1.35rem,2vw,2.6rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
                   {selectedSong?.titulo ?? "Sin cancion seleccionada"}
                 </h2>
                 <p className="mt-2 text-[clamp(0.88rem,1vw,1.08rem)] text-white/66">
                   {selectedSong?.artista ?? "Artista pendiente"}
                 </p>
               </div>
-              <div className="shrink-0 rounded-[1.4rem] bg-[#ffd36b]/10 px-[clamp(14px,1.2vw,22px)] py-[clamp(10px,1vw,16px)] text-center">
+              <div className="w-fit shrink-0 rounded-[1.4rem] bg-[#ffd36b]/10 px-[clamp(14px,1.2vw,22px)] py-[clamp(10px,1vw,16px)] text-center">
                 <p className="text-[clamp(10px,0.68vw,12px)] uppercase tracking-[0.3em] text-[#ffd58a]/72">
                   Bola
                 </p>
@@ -214,14 +243,17 @@ export default function DetailScreen() {
             </div>
 
             <div className="mt-[clamp(8px,0.7vw,14px)] min-h-0 flex-1 overflow-hidden rounded-4xl">
-              <div className="relative h-full overflow-hidden bg-black" style={{ isolation: "isolate" }}>
+              <div
+                className="relative aspect-video min-h-[240px] overflow-hidden bg-black md:min-h-[320px] xl:h-full xl:min-h-0"
+                style={{ isolation: "isolate" }}
+              >
                 {selectedSong && downloadedNumbers.includes(selectedSong.numero) ? (
                   <video
                     ref={songVideoRef}
                     key={selectedSong.numero}
                     src={videoSources[selectedSong.numero]}
                     preload="auto"
-                    className="mx-auto h-[106%] w-[92%] scale-x-[0.9] object-fill"
+                    className="mx-auto h-full w-full object-contain"
                     playsInline
                     style={{ backgroundColor: "#000" }}
                   />
@@ -260,45 +292,28 @@ export default function DetailScreen() {
             </div>
           </PanelCard>
 
-          <PanelCard className="flex h-full min-h-0 flex-col overflow-hidden">
-            <p className="text-[clamp(10px,0.72vw,12px)] uppercase tracking-[0.32em] text-white/52">
-              Derecha
-            </p>
-            <h2 className="mt-2 text-[clamp(1.15rem,1.65vw,2rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
-              Sonidos
-            </h2>
-            <p className="mt-3 text-[clamp(0.82rem,0.88vw,0.98rem)] leading-[1.5] text-white/64">
-              Pulsa cualquier boton para lanzar el efecto. Cada sonido se reproduce solo unos segundos.
-            </p>
-
-            <div className="mt-[clamp(12px,1vw,18px)] flex-1 min-h-0 rounded-[1.9rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-[clamp(12px,1vw,18px)] shadow-[0_20px_60px_rgba(0,0,0,0.24)]">
-              <div className="grid h-full auto-rows-fr gap-3">
+          <PanelCard className="flex min-h-0 flex-col overflow-hidden lg:col-span-2 xl:col-span-1 xl:h-full">
+            <div className="flex-1 min-h-0 rounded-[1.9rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-[clamp(12px,1vw,18px)] shadow-[0_20px_60px_rgba(0,0,0,0.24)]">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:h-full xl:auto-rows-fr xl:grid-cols-1">
                 {SOUND_EFFECTS.map((sound) => (
                   <button
                     key={sound.id}
                     type="button"
                     onClick={() => playSoundPreview(sound.id)}
-                    className="group relative overflow-hidden rounded-[1.35rem] text-left transition hover:-translate-y-[1px]"
+                    className="group relative overflow-hidden rounded-[1.35rem] transition hover:-translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd36b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#120b1a]"
+                    aria-label={`Reproducir ${sound.label}`}
                   >
-                    <PixelCard
-                      variant="pink"
-                      gap={8}
-                      speed={48}
-                      colors="#ffd0ea,#ff7ec4,#e11d8a"
-                      noFocus
-                      className="h-full min-h-[clamp(56px,7vh,84px)] rounded-[1.35rem] border border-[#7a2957]/75 bg-[linear-gradient(180deg,rgba(35,16,40,0.96),rgba(17,10,24,0.98))] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_14px_34px_rgba(2,6,23,0.38)]"
-                    >
-                      <div className="absolute inset-0 z-10 flex items-center px-[clamp(14px,1.1vw,18px)] py-[clamp(10px,0.9vw,14px)]">
-                        <span>
-                          <span className="block text-[clamp(0.92rem,1vw,1.08rem)] font-black tracking-[-0.03em] text-white">
-                            {sound.label}
-                          </span>
-                          <span className="mt-1 block text-[clamp(0.72rem,0.76vw,0.84rem)] uppercase tracking-[0.22em] text-[#9bbcff]">
-                            {sound.durationMs / 1000}s
-                          </span>
-                        </span>
-                      </div>
-                    </PixelCard>
+                    <div className="relative h-full min-h-[clamp(56px,7vh,84px)] overflow-hidden rounded-[1.35rem] border border-white/10 bg-black/24 p-[clamp(8px,0.8vw,12px)] shadow-[0_14px_34px_rgba(2,6,23,0.38)]">
+                      <img
+                        src={sound.iconSrc}
+                        alt={sound.label}
+                        className="h-full w-full scale-[0.8] object-contain transition duration-200 group-hover:scale-[0.84]"
+                        loading="eager"
+                      />
+                    </div>
+                    <span className="pointer-events-none absolute inset-x-0 bottom-2 text-center text-xs font-black uppercase tracking-[0.24em] text-white/90 drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]">
+                      {sound.label}
+                    </span>
                   </button>
                 ))}
               </div>

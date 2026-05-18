@@ -20,7 +20,7 @@ export default function DrawScreen() {
   } = useKaraokeGame();
 
   return (
-    <main className="relative h-dvh overflow-hidden bg-[#08111f] text-white">
+    <main className="relative min-h-screen overflow-hidden bg-[#08111f] text-white">
       <video
         autoPlay
         muted
@@ -34,7 +34,7 @@ export default function DrawScreen() {
 
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,129,86,0.14),transparent_32%),radial-gradient(circle_at_80%_20%,rgba(91,163,255,0.16),transparent_30%),linear-gradient(180deg,rgba(5,10,20,0.16),rgba(5,10,20,0.72))]" />
 
-      <section className="relative h-dvh overflow-hidden">
+      <section className="relative min-h-screen overflow-hidden">
         <div className="absolute inset-0">
           <BallMachine
             numbers={allNumbers}
