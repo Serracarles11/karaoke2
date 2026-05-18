@@ -7,6 +7,8 @@ const sourceDir = path.join(rootDir, "cancionesnormalizadas");
 const fallbackDir = path.join(rootDir, "downloads", "canciones");
 const targetDir = path.join(rootDir, "public", "canciones");
 const manifestPath = path.join(rootDir, "public", "canciones-manifest.json");
+const isVercelBuild = process.env.VERCEL === "1";
+const remoteVideoBaseUrl = process.env.VIDEO_CDN_BASE_URL?.replace(/\/+$/, "") ?? "";
 
 type ManifestEntry = {
   numero: number;
@@ -70,11 +72,48 @@ function findFallbackSource(numero: number) {
   return null;
 }
 
+function buildRemoteSrc(fileName: string) {
+  return `${remoteVideoBaseUrl}/${encodeURIComponent(fileName)}`;
+}
+
+function writeManifest(entries: ManifestEntry[]) {
+  entries.sort((a, b) => a.numero - b.numero);
+  fs.writeFileSync(manifestPath, `${JSON.stringify({ canciones: entries }, null, 2)}\n`);
+}
+
 function main() {
   ensureDir(targetDir);
 
   const manifest: ManifestEntry[] = [];
   const copiedFiles = new Set<string>();
+
+  if (remoteVideoBaseUrl) {
+    for (const [numeroRaw, fileName] of Object.entries(LOCAL_VIDEO_FILES)) {
+      if (!fileName) continue;
+
+      manifest.push({
+        numero: Number(numeroRaw),
+        archivo: fileName,
+        src: buildRemoteSrc(fileName),
+      });
+    }
+
+    writeManifest(manifest);
+    console.log(`[vercel] Manifest remoto generado: ${manifest.length} videos desde ${remoteVideoBaseUrl}`);
+    return;
+  }
+
+  if (isVercelBuild) {
+    for (const existingFile of fs.readdirSync(targetDir)) {
+      safeUnlink(path.join(targetDir, existingFile));
+    }
+
+    writeManifest([]);
+    console.warn(
+      "[vercel] Build en Vercel sin VIDEO_CDN_BASE_URL. Se genera un manifiesto vacio para evitar subir videos locales.",
+    );
+    return;
+  }
 
   for (const [numeroRaw, fileName] of Object.entries(LOCAL_VIDEO_FILES)) {
     if (!fileName) continue;
@@ -107,8 +146,7 @@ function main() {
     safeUnlink(path.join(targetDir, existingFile));
   }
 
-  manifest.sort((a, b) => a.numero - b.numero);
-  fs.writeFileSync(manifestPath, `${JSON.stringify({ canciones: manifest }, null, 2)}\n`);
+  writeManifest(manifest);
   console.log(`[vercel] Videos preparados: ${manifest.length}`);
 }
 

@@ -11,19 +11,33 @@ La app arranca en `http://localhost:3000`.
 
 ## Despliegue en Vercel
 
-El proyecto queda preparado para Vercel con estos cambios:
+El proyecto queda preparado para Vercel con dos comportamientos:
 
-- Los videos ya no se sirven desde rutas API con acceso al disco.
-- En cada `pnpm build`, el script `scripts/preparar-videos-publicos.ts` copia los archivos necesarios a `public/canciones/`.
-- Ese mismo script genera `public/canciones-manifest.json`, que usa la interfaz para saber qué canciones tienen video.
+- En local, `pnpm build` sigue copiando los videos necesarios a `public/canciones/`.
+- En Vercel, `.vercelignore` evita subir `cancionesnormalizadas`, `downloads` y los videos generados en `public/canciones`.
+- Si defines `VIDEO_CDN_BASE_URL`, el build genera `public/canciones-manifest.json` con URLs remotas.
+- Si no defines `VIDEO_CDN_BASE_URL`, Vercel despliega igual pero la pantalla de videoclip no tendra videos disponibles.
 
 ### Pasos
 
 1. Importa en Vercel la carpeta `karaoke/` como proyecto.
 2. Usa `pnpm` como package manager.
 3. Deja `pnpm build` como comando de build.
-4. Despliega.
+4. Opcional pero recomendado: define `VIDEO_CDN_BASE_URL` con la base donde alojes los `.mp4`.
+5. Despliega.
 
-### Límite importante
+### Ejemplo de `VIDEO_CDN_BASE_URL`
 
-Los videos ocupan varios cientos de MB. Si Vercel rechaza el despliegue por tamaño, la alternativa correcta es mover los videos a almacenamiento externo o CDN y dejar en el repo solo el manifiesto con sus URLs.
+```bash
+VIDEO_CDN_BASE_URL=https://tu-cdn.example.com/canciones
+```
+
+El manifiesto resultante apuntara a URLs del tipo:
+
+```text
+https://tu-cdn.example.com/canciones/unanochemas.mp4
+```
+
+### Limite importante
+
+Los videos ocupan varios cientos de MB. Vercel no debe usarse para alojar esta biblioteca de archivos. La opcion correcta es servirlos desde almacenamiento externo o CDN y dejar en el despliegue solo el manifiesto con sus URLs.

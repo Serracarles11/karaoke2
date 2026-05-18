@@ -20,7 +20,7 @@ export default function DrawScreen() {
   } = useKaraokeGame();
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#08111f] text-white">
+    <main className="screen-shell relative min-h-screen overflow-hidden bg-[#08111f] text-white">
       <video
         autoPlay
         muted
@@ -34,7 +34,7 @@ export default function DrawScreen() {
 
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,129,86,0.14),transparent_32%),radial-gradient(circle_at_80%_20%,rgba(91,163,255,0.16),transparent_30%),linear-gradient(180deg,rgba(5,10,20,0.16),rgba(5,10,20,0.72))]" />
 
-      <section className="relative min-h-screen overflow-hidden">
+      <section className="screen-fill relative min-h-screen overflow-hidden">
         <div className="absolute inset-0">
           <BallMachine
             numbers={allNumbers}
@@ -89,7 +89,7 @@ export default function DrawScreen() {
           </div>
         ) : null}
 
-        <div className="absolute bottom-[clamp(22px,3vh,34px)] left-1/2 flex w-[min(86vw,58rem)] -translate-x-1/2 flex-col items-center gap-[clamp(10px,1vw,18px)]">
+        <div className="tv-draw-center absolute bottom-[clamp(22px,3vh,34px)] left-1/2 flex w-[min(86vw,58rem)] -translate-x-1/2 flex-col items-center gap-[clamp(10px,1vw,18px)]">
           <button
             type="button"
             onClick={spinBall}
@@ -109,14 +109,14 @@ export default function DrawScreen() {
                 <button
                   type="button"
                   onClick={() => router.push("/videoclip")}
-                  className="rounded-full border border-[#ffd36b]/36 bg-[#ffd36b]/16 px-[clamp(18px,1.5vw,24px)] py-[clamp(10px,1vw,14px)] text-[clamp(0.82rem,0.95vw,1rem)] font-black text-[#fff0be] shadow-[0_10px_40px_rgba(0,0,0,0.25)] backdrop-blur-sm transition hover:bg-[#ffd36b]/22"
+                  className="tv-glass-button rounded-full border border-[#ffd36b]/36 bg-[#ffd36b]/16 px-[clamp(18px,1.5vw,24px)] py-[clamp(10px,1vw,14px)] text-[clamp(0.82rem,0.95vw,1rem)] font-black text-[#fff0be] shadow-[0_10px_40px_rgba(0,0,0,0.25)] backdrop-blur-sm transition hover:bg-[#ffd36b]/22"
                 >
                   Ir al videoclip
                 </button>
                 <button
                   type="button"
                   onClick={() => router.push("/")}
-                  className="rounded-full border border-white/14 bg-white/8 px-[clamp(18px,1.5vw,24px)] py-[clamp(10px,1vw,14px)] text-[clamp(0.82rem,0.95vw,1rem)] font-semibold text-white/84 shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-sm transition hover:bg-white/12 disabled:cursor-not-allowed disabled:opacity-45"
+                  className="tv-glass-button rounded-full border border-white/14 bg-white/8 px-[clamp(18px,1.5vw,24px)] py-[clamp(10px,1vw,14px)] text-[clamp(0.82rem,0.95vw,1rem)] font-semibold text-white/84 shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-sm transition hover:bg-white/12 disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   Pantalla de carga
                 </button>
@@ -141,7 +141,7 @@ export default function DrawScreen() {
               drawnNumbers.slice(-12).map((number) => (
                 <span
                   key={number}
-                  className="rounded-full border border-white/12 bg-white/8 px-[clamp(10px,0.9vw,14px)] py-[clamp(5px,0.55vw,8px)] text-[clamp(0.78rem,0.9vw,0.95rem)] font-semibold text-white/84 backdrop-blur-sm"
+                  className="tv-glass-button rounded-full border border-white/12 bg-white/8 px-[clamp(10px,0.9vw,14px)] py-[clamp(5px,0.55vw,8px)] text-[clamp(0.78rem,0.9vw,0.95rem)] font-semibold text-white/84 backdrop-blur-sm"
                 >
                   {number.toString().padStart(2, "0")}
                 </span>

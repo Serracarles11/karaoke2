@@ -29,3 +29,132 @@ html,
 body {
   min-height: 100%;
 }
+
+.screen-shell {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.screen-fill {
+  min-height: 100vh;
+}
+
+.screen-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.screen-stage {
+  position: relative;
+  z-index: 10;
+  margin: 0 auto;
+  max-width: 1800px;
+  padding: 18px;
+}
+
+.tv-detail-grid {
+  display: grid;
+  gap: 18px;
+  min-height: 100vh;
+  padding-bottom: 16px;
+}
+
+.tv-draw-center {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  width: min(86vw, 58rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.tv-card {
+  border-radius: 2.1rem;
+  background: transparent;
+  padding: 20px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+}
+
+.tv-video-shell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000;
+  min-height: 240px;
+  aspect-ratio: 16 / 9;
+}
+
+.tv-video-frame {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.tv-video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.tv-sound-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.tv-glass-button {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+@media (min-width: 640px) {
+  .screen-stage {
+    padding: 22px;
+  }
+
+  .tv-sound-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tv-card {
+    padding: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .tv-detail-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .screen-stage {
+    padding: 26px;
+  }
+
+  .tv-detail-grid {
+    min-height: calc(100vh - 52px);
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 1.45fr) minmax(0, 0.72fr);
+    overflow: hidden;
+  }
+
+  .tv-video-shell {
+    min-height: 0;
+    height: 100%;
+  }
+
+  .tv-sound-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: 1fr;
+    height: 100%;
+  }
+}
