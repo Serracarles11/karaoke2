@@ -14,6 +14,13 @@ const SOUND_EFFECTS = [
   { id: "triste", label: "Triste", src: "/sonidos/triste.mp3", durationMs: 5000 },
 ] as const;
 
+type CancionesManifest = {
+  canciones: Array<{
+    numero: number;
+    src: string;
+  }>;
+};
+
 export default function DetailScreen() {
   const {
     allNumbers,
@@ -24,15 +31,22 @@ export default function DetailScreen() {
     selectedSong,
   } = useKaraokeGame();
   const [downloadedNumbers, setDownloadedNumbers] = useState<number[]>([]);
+  const [videoSources, setVideoSources] = useState<Record<number, string>>({});
   const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
   const stopSoundTimeoutRef = useRef<number | null>(null);
   const currentSoundRef = useRef<string | null>(null);
   const songVideoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
-    fetch("/api/canciones-disponibles")
+    fetch("/canciones-manifest.json", { cache: "no-store" })
       .then((response) => response.json())
-      .then((data: { numeros: number[] }) => setDownloadedNumbers(data.numeros))
+      .then((data: CancionesManifest) => {
+        const availableSongs = data.canciones ?? [];
+        setDownloadedNumbers(availableSongs.map((song) => song.numero));
+        setVideoSources(
+          Object.fromEntries(availableSongs.map((song) => [song.numero, song.src])),
+        );
+      })
       .catch(() => {});
   }, []);
 
@@ -205,7 +219,7 @@ export default function DetailScreen() {
                   <video
                     ref={songVideoRef}
                     key={selectedSong.numero}
-                    src={`/api/video/${selectedSong.numero}`}
+                    src={videoSources[selectedSong.numero]}
                     preload="auto"
                     className="mx-auto h-[106%] w-[92%] scale-x-[0.9] object-fill"
                     playsInline

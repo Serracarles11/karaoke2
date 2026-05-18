@@ -16,6 +16,8 @@
 # next.js
 /.next/
 /out/
+/public/canciones/
+/public/canciones-manifest.json
 
 # production
 /build
