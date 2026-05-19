@@ -69,9 +69,11 @@ export default function DrawScreen() {
           <button
             type="button"
             onClick={resetGame}
-            className="mt-[clamp(12px,1.2vw,20px)] rounded-full border border-white/14 bg-black/24 px-[clamp(16px,1.6vw,24px)] py-[clamp(10px,1vw,14px)] text-[clamp(0.8rem,0.95vw,1rem)] font-black text-white/88 backdrop-blur-sm transition hover:bg-black/34"
+            aria-label="Reiniciar partida"
+            title="Reiniciar partida"
+            className="mt-[clamp(12px,1.2vw,20px)] rounded-full border border-white/8 bg-black/10 px-[clamp(8px,0.8vw,12px)] py-[clamp(4px,0.5vw,6px)] text-[clamp(0.55rem,0.65vw,0.7rem)] font-medium uppercase tracking-[0.18em] text-white/22 opacity-30 backdrop-blur-sm transition hover:bg-black/34 hover:text-white/80 hover:opacity-100"
           >
-            Reiniciar partida
+            Reiniciar
           </button>
         </div>
 

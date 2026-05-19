@@ -7,106 +7,106 @@ export type Cancion = {
 };
 
 export const LISTA_CANCIONES = [
-  "Jennifer Lopez - Una Noche MÃ¡s letra lyrics",
-  "W Sound BeÃ©le Westcol Ovy On The Drums - La Plena video lyrics letra",
-  "Figa Flawas - La Marina Sta Morena letra lyrics",
-  "Melody - Esa Diva letra lyrics",
-  "HUGEL - Una Noche con Hugel letra lyrics",
-  "Vilu Gontero - Capaz vs We Found Love mashup lyrics letra",
-  "MarÃ­a Isabel - Antes Muerta Que Sencilla letra lyrics karaoke",
-  "Culture Beat - Mr. Vain lyrics letra",
-  "Dani FernÃ¡ndez - Me Has Invitado a Bailar letra lyrics",
-  "KAROL G - Si Antes Te Hubiera Conocido letra lyrics",
-  "Lola Indigo - La Reina letra lyrics",
-  "Gusanito - Vive La Vida letra lyrics",
-  "Nebulossa - Zorra letra lyrics",
-  "El Ãšltimo de la Fila - Cuando el Mar te Tenga letra lyrics",
-  "C Tangana - Mala Mujer letra lyrics",
-  "Luck Ra BM - La Morocha letra lyrics",
-  "Daddy Yankee - Gasolina letra lyrics karaoke",
-  "SebastiÃ¡n Yatra Manuel Turizo BeÃ©le - Vagabundo letra lyrics",
-  "Marshmello Manuel Turizo - El Merengue letra lyrics",
-  "The Tyets - Coti x Coti lletra lyrics karaoke",
-  "Vicco - Nochentera letra lyrics",
-  "Juan Luis Guerra - La Bilirrubina letra lyrics karaoke",
-  "sangiovanni Aitana - Mariposas letra lyrics",
-  "Zzoilo Aitana - Mon Amour Remix letra lyrics",
-  "Bad Bunny - TitÃ­ Me PreguntÃ³ letra lyrics",
-  "El Canto del Loco - Zapatillas letra lyrics karaoke",
-  "SebastiÃ¡n Yatra - Tacones Rojos letra lyrics",
-  "Starship - Nothing's Gonna Stop Us Now lyrics letra karaoke",
-  "Farruko - Pepas letra lyrics",
-  "Rauw Alejandro - Todo de Ti letra lyrics",
-  "Camela - Cuando Zarpa el Amor letra lyrics karaoke",
-  "Merche - Abre Tu Mente letra lyrics",
-  "Corona - The Rhythm of the Night lyrics letra",
-  "Mecano - Me ColÃ© en una Fiesta letra lyrics karaoke",
-  "Daniela Romo - Yo No Te Pido La Luna letra lyrics karaoke",
-  "La Guardia - Cuando Brille el Sol letra lyrics",
-  "Raffaella CarrÃ  - Hay Que Venir al Sur letra lyrics karaoke",
-  "Alaska y Dinarama - A QuiÃ©n Le Importa letra lyrics karaoke",
-  "Camilo Sesto - Vivir AsÃ­ es Morir de Amor letra lyrics karaoke",
-  "Fred De Palma Ana Mena - Se Iluminaba letra lyrics",
-  "David Civera - Que La Detengan letra lyrics karaoke",
-  "Ladilla Rusa - KITT y los Coches del Pasado letra lyrics",
-  "Nino Bravo - Un Beso y Una Flor letra lyrics karaoke",
-  "Antonio Flores - No DudarÃ­a letra lyrics",
-  "Marisol - Tengo el CorazÃ³n Contento letra lyrics karaoke",
-  "Becky G Bad Bunny - Mayores letra lyrics",
-  "Paloma San Basilio - Juntos letra lyrics karaoke",
-  "Melendi - Caminando por la Vida letra lyrics",
-  "Bonnie Tyler - Holding Out For A Hero lyrics letra karaoke",
-  "Sabrina - Boys Summertime Love lyrics letra",
-  "Al Bano Romina Power - FelicitÃ  lyrics letra karaoke",
-  "J Balvin - Ginza letra lyrics",
-  "Hombres G - Venezia letra lyrics karaoke",
-  "Duncan Dhu - En AlgÃºn Lugar letra lyrics",
-  "Madonna - Into The Groove lyrics letra",
-  "El Barrio - Pa Madrid letra lyrics",
-  "Michael Sembello - Maniac lyrics letra karaoke",
-  "Jarabe de Palo - La Flaca letra lyrics karaoke",
-  "Nicki Minaj - Starships lyrics letra",
-  "Julio Iglesias - Quijote letra lyrics",
-  "Viceversa - Tu Piel Morena letra lyrics",
-  "OlÃ© OlÃ© - Voy a Mil letra lyrics",
-  "Jose De Rico Henry Mendez - Rayos de Sol letra lyrics",
-  "SNAP! - Rhythm Is A Dancer lyrics letra",
-  "Whigfield - Saturday Night lyrics letra karaoke",
-  "Don Omar Lucenzo - Danza Kuduro letra lyrics karaoke",
-  "Ricchi e Poveri - SerÃ¡ Porque Te Amo letra lyrics karaoke",
-  "Nena Daconte - TenÃ­a Tanto Que Darte letra lyrics",
-  "Justin Bieber - Baby ft Ludacris lyrics letra",
-  "Lolita - Sarandonga letra lyrics karaoke",
-  "OlÃ© OlÃ© - No Controles letra lyrics",
-  "Paulina Rubio - Ni Una Sola Palabra letra lyrics karaoke",
-  "Shakira - Loba letra lyrics",
-  "Madonna - Hung Up lyrics letra",
-  "La Oreja de Van Gogh - Puedes Contar Conmigo letra lyrics",
-  "Andy y Lucas - Son de Amores letra lyrics karaoke",
-  "Cyndi Lauper - Girls Just Want To Have Fun lyrics letra",
-  "Estopa - Cacho a Cacho letra lyrics",
-  "ABBA - Dancing Queen lyrics letra karaoke",
-  "La Quinta EstaciÃ³n - Me Muero letra lyrics",
-  "El Canto del Loco - Besos letra lyrics karaoke",
-  "La Bouche - Sweet Dreams lyrics letra",
-  "Bon Jovi - It's My Life lyrics letra karaoke",
-  "Carlos Baute Marta SÃ¡nchez - Colgando en Tus Manos letra lyrics karaoke",
-  "Katy Perry - Hot N Cold lyrics letra",
-  "Camela - Cuando Zarpa el Amor letra lyrics karaoke",
-  "Queen - I Want To Break Free lyrics letra karaoke",
-  "Calle 13 - AtrÃ©vete Te Te letra lyrics karaoke",
-  "Sonia y Selena - Yo Quiero Bailar letra lyrics karaoke",
-  "Alaska y Dinarama - CÃ³mo Pudiste Hacerme Esto a MÃ­ letra lyrics",
-  "Lady Gaga - Born This Way lyrics letra",
-  "Technotronic - Pump Up The Jam lyrics letra",
-  "Gala - Freed From Desire lyrics letra",
-  "Billy Idol - Dancing With Myself lyrics letra",
-  "Backstreet Boys - Everybody lyrics letra karaoke",
-  "Michael Jackson - Billie Jean letra lyrics karaoke",
-  "Miley Cyrus - Heart of Glass lyrics letra",
-  "RosalÃ­a - DespechÃ¡ letra lyrics",
-  "Mecano - Maquillaje letra lyrics karaoke",
-  "Dua Lipa - Physical feat Troye Sivan lyrics letra",
+  "Jennifer Lopez - Una Noche Más",
+  "W Sound Beéle Westcol Ovy On The Drums - La Plena",
+  "Figa Flawas - La Marina Sta Morena",
+  "Melody - Esa Diva",
+  "HUGEL - Una Noche con Hugel",
+  "Vilu Gontero - Capaz vs We Found Love Mashup",
+  "María Isabel - Antes Muerta Que Sencilla",
+  "Culture Beat - Mr. Vain",
+  "Dani Fernández - Me Has Invitado a Bailar",
+  "KAROL G - Si Antes Te Hubiera Conocido",
+  "Lola Indigo - La Reina",
+  "Gusanito - Vive La Vida",
+  "Nebulossa - Zorra",
+  "El Último de la Fila - Cuando el Mar te Tenga",
+  "C Tangana - Mala Mujer",
+  "Luck Ra BM - La Morocha",
+  "Daddy Yankee - Gasolina",
+  "Sebastián Yatra Manuel Turizo Beéle - Vagabundo",
+  "Marshmello Manuel Turizo - El Merengue",
+  "The Tyets - Coti x Coti",
+  "Vicco - Nochentera",
+  "Juan Luis Guerra - La Bilirrubina",
+  "sangiovanni Aitana - Mariposas",
+  "Zzoilo Aitana - Mon Amour Remix",
+  "Bad Bunny - Tití Me Preguntó",
+  "El Canto del Loco - Zapatillas",
+  "Sebastián Yatra - Tacones Rojos",
+  "Starship - Nothing's Gonna Stop Us Now",
+  "Farruko - Pepas",
+  "Rauw Alejandro - Todo de Ti",
+  "Camela - Cuando Zarpa el Amor",
+  "Merche - Abre Tu Mente",
+  "Corona - The Rhythm of the Night",
+  "Mecano - Me Colé en una Fiesta",
+  "Daniela Romo - Yo No Te Pido La Luna",
+  "La Guardia - Cuando Brille el Sol",
+  "Raffaella Carrà - Hay Que Venir al Sur",
+  "Alaska y Dinarama - A Quién Le Importa",
+  "Camilo Sesto - Vivir Así es Morir de Amor",
+  "Fred De Palma Ana Mena - Se Iluminaba",
+  "David Civera - Que La Detengan",
+  "Ladilla Rusa - KITT y los Coches del Pasado",
+  "Nino Bravo - Un Beso y Una Flor",
+  "Antonio Flores - No Dudaría",
+  "Marisol - Tengo el Corazón Contento",
+  "Becky G Bad Bunny - Mayores",
+  "Paloma San Basilio - Juntos",
+  "Melendi - Caminando por la Vida",
+  "Bonnie Tyler - Holding Out For A Hero",
+  "Sabrina - Boys Summertime Love",
+  "Al Bano Romina Power - Felicità",
+  "J Balvin - Ginza",
+  "Hombres G - Venezia",
+  "Duncan Dhu - En Algún Lugar",
+  "Madonna - Into The Groove",
+  "El Barrio - Pa Madrid",
+  "Michael Sembello - Maniac",
+  "Jarabe de Palo - La Flaca",
+  "Nicki Minaj - Starships",
+  "Julio Iglesias - Quijote",
+  "Viceversa - Tu Piel Morena",
+  "Olé Olé - Voy a Mil",
+  "Jose De Rico Henry Mendez - Rayos de Sol",
+  "SNAP! - Rhythm Is A Dancer",
+  "Whigfield - Saturday Night",
+  "Don Omar Lucenzo - Danza Kuduro",
+  "Ricchi e Poveri - Será Porque Te Amo",
+  "Nena Daconte - Tenía Tanto Que Darte",
+  "Justin Bieber - Baby ft Ludacris",
+  "Lolita - Sarandonga",
+  "Olé Olé - No Controles",
+  "Paulina Rubio - Ni Una Sola Palabra",
+  "Shakira - Loba",
+  "Madonna - Hung Up",
+  "La Oreja de Van Gogh - Puedes Contar Conmigo",
+  "Andy y Lucas - Son de Amores",
+  "Cyndi Lauper - Girls Just Want To Have Fun",
+  "Estopa - Cacho a Cacho",
+  "ABBA - Dancing Queen",
+  "La Quinta Estación - Me Muero",
+  "El Canto del Loco - Besos",
+  "La Bouche - Sweet Dreams",
+  "Bon Jovi - It's My Life",
+  "Carlos Baute Marta Sánchez - Colgando en Tus Manos",
+  "Katy Perry - Hot N Cold",
+  "Camela - Cuando Zarpa el Amor",
+  "Queen - I Want To Break Free",
+  "Calle 13 - Atrévete Te Te",
+  "Sonia y Selena - Yo Quiero Bailar",
+  "Alaska y Dinarama - Cómo Pudiste Hacerme Esto a Mí",
+  "Lady Gaga - Born This Way",
+  "Technotronic - Pump Up The Jam",
+  "Gala - Freed From Desire",
+  "Billy Idol - Dancing With Myself",
+  "Backstreet Boys - Everybody",
+  "Michael Jackson - Billie Jean",
+  "Miley Cyrus - Heart of Glass",
+  "Rosalía - Despechá",
+  "Mecano - Maquillaje",
+  "Dua Lipa - Physical feat Troye Sivan",
 ] as const;
 
 export const YOUTUBE_IDS: Partial<Record<number, string>> = {
@@ -213,6 +213,7 @@ export const YOUTUBE_IDS: Partial<Record<number, string>> = {
 };
 
 function repararMojibake(texto: string) {
+  if (!/[ÃÂ]/.test(texto)) return texto;
   try {
     const bytes = Uint8Array.from(texto, (char) => char.charCodeAt(0) & 0xff);
     return new TextDecoder("utf-8").decode(bytes);
@@ -256,104 +257,104 @@ export const canciones: Cancion[] = LISTA_CANCIONES.map((raw, numero) =>
 );
 
 export const LOCAL_VIDEO_FILES: Partial<Record<number, string>> = {
-  0:  "unanochemas.mp4",            // Jennifer Lopez - Una Noche Más
-  1:  "laplena.mp4",                // W Sound Beéle - La Plena
-  2:  "lamarinastamorena.mp4",      // Figa Flawas - La Marina Sta Morena
-  3:  "esadiva.mp4",                // Melody - Esa Diva
-  4:  "unanocheconhugel.mp4",       // HUGEL - Una Noche con Hugel
-  5:  "capazvswefoundlove.mp4",     // Vilu Gontero - Capaz vs We Found Love
-  6:  "antesmuertaquesencilla.mp4", // María Isabel - Antes Muerta Que Sencilla
-  7:  "mrvain.mp4",                 // Culture Beat - Mr. Vain
-  8:  "mehasinvitadoabailar.mp4",   // Dani Fernández - Me Has Invitado a Bailar
-  9:  "siantestehubieraconocido.mp4", // KAROL G - Si Antes Te Hubiera Conocido
-  10: "lareina.mp4",                // Lola Indigo - La Reina
-  11: "vivelavida.mp4",             // Gusanito - Vive La Vida
-  12: "zorra.mp4",                  // Nebulossa - Zorra
-  13: "cuandoelmartetenga.mp4",     // El Último de la Fila - Cuando el Mar te Tenga
-  14: "malamujer.mp4",              // C Tangana - Mala Mujer
-  15: "lamorocha.mp4",              // Luck Ra BM - La Morocha
-  16: "gasolina.mp4",               // Daddy Yankee - Gasolina
-  17: "vagabundo.mp4",              // Sebastián Yatra Manuel Turizo - Vagabundo
-  18: "elmerengue.mp4",             // Marshmello Manuel Turizo - El Merengue
-  19: "cotixcoti.mp4",              // The Tyets - Coti x Coti
-  20: "nocheentera.mp4",            // Vicco - Nochentera
-  21: "labilirrubina.mp4",          // Juan Luis Guerra - La Bilirrubina
-  22: "mariposas.mp4",              // sangiovanni Aitana - Mariposas
-  23: "monamour.mp4",               // Zzoilo Aitana - Mon Amour Remix
-  24: "titimepregunto.mp4",         // Bad Bunny - Tití Me Preguntó
-  25: "zapatillas.mp4",             // El Canto del Loco - Zapatillas
-  26: "taconesrojos.mp4",           // Sebastián Yatra - Tacones Rojos
-  27: "nothinggonastopnow.mp4",     // Starship - Nothing's Gonna Stop Us Now
-  28: "pepas.mp4",                  // Farruko - Pepas
-  29: "tododeti.mp4",               // Rauw Alejandro - Todo de Ti
-  30: "cuandozarpaelamor.mp4",      // Camela - Cuando Zarpa el Amor
-  31: "abretumente.mp4",            // Merche - Abre Tu Mente
-  32: "therythimontenight.mp4",     // Corona - The Rhythm of the Night
-  33: "mecoleenunafiesta.mp4",      // Mecano - Me Colé en una Fiesta
-  34: "yonotepidolaluna.mp4",       // Daniela Romo - Yo No Te Pido La Luna
-  35: "cuandobrilleelesol.mp4",     // La Guardia - Cuando Brille el Sol
-  36: "hayqueveniralsur.mp4",       // Raffaella Carrá - Hay Que Venir al Sur
-  37: "aquienleimporta.mp4",        // Alaska y Dinarama - A Quién Le Importa
-  38: "vivirasiesmorirdeamor.mp4",  // Camilo Sesto - Vivir Así es Morir de Amor
-  39: "seiluminaba.mp4",            // Fred De Palma Ana Mena - Se Iluminaba
-  40: "queladetengan.mp4",          // David Civera - Que La Detengan
-  41: "littyloscochesdelpasado.mp4", // Ladilla Rusa - KITT y los Coches del Pasado
-  42: "unbesoyunaflor.mp4",         // Nino Bravo - Un Beso y Una Flor
-  43: "nodudaria.mp4",              // Antonio Flores - No Dudaría
-  44: "corazoncontento.mp4",        // Marisol - Tengo el Corazón Contento
-  45: "mayores.mp4",                // Becky G Bad Bunny - Mayores
-  46: "juntos.mp4",                 // Paloma San Basilio - Juntos
-  47: "caminandoporlavida.mp4",     // Melendi - Caminando por la Vida
-  48: "holdingoutforahero.mp4",     // Bonnie Tyler - Holding Out For A Hero
-  49: "boys.mp4",                   // Sabrina - Boys Summertime Love
-  50: "felicita.mp4",               // Al Bano Romina Power - Felicitá
-  51: "ginza.mp4",                  // J Balvin - Ginza
-  52: "venezia.mp4",                // Hombres G - Venezia
-  53: "Duncan Dhu - En Algún Lugar.mp4", // Duncan Dhu - En Algún Lugar
-  54: "intothegrove.mp4",           // Madonna - Into The Groove
-  55: "pamadrid.mp4",               // El Barrio - Pa Madrid
-  56: "maniac.mp4",                 // Michael Sembello - Maniac
-  57: "laflaca.mp4",                // Jarabe de Palo - La Flaca
-  58: "starship.mp4",               // Nicki Minaj - Starships
-  59: "quijote.mp4",                // Julio Iglesias - Quijote
-  60: "ella.mp4",                   // Viceversa - Tu Piel Morena
-  61: "voyamil.mp4",                // Olé Olé - Voy a Mil
-  62: "rayosdesol.mp4",             // Jose De Rico Henry Mendez - Rayos de Sol
-  63: "rythmisadancer.mp4",         // SNAP! - Rhythm Is A Dancer
-  64: "saturdaynight.mp4",          // Whigfield - Saturday Night
-  65: "danzakuduro.mp4",            // Don Omar Lucenzo - Danza Kuduro
-  66: "seraporqueteamo.mp4",        // Ricchi e Poveri - Será Porque Te Amo
-  67: "teniatantoquedarte.mp4",     // Nena Daconte - Tenía Tanto Que Darte
-  68: "baby.mp4",                   // Justin Bieber - Baby
-  69: "sarandonga.mp4",             // Lolita - Sarandonga
-  70: "nocontroles.mp4",            // Olé Olé - No Controles
-  71: "niunasolapalabra.mp4",       // Paulina Rubio - Ni Una Sola Palabra
-  72: "loba.mp4",                   // Shakira - Loba
-  73: "hungup.mp4",                 // Madonna - Hung Up
-  74: "puedescontarconmigo.mp4",    // La Oreja de Van Gogh - Puedes Contar Conmigo
-  75: "sondeamores.mp4",            // Andy y Lucas - Son de Amores
-  76: "girlsjustwanttohavefun.mp4", // Cyndi Lauper - Girls Just Want To Have Fun
-  77: "cachoacacho.mp4",            // Estopa - Cacho a Cacho
-  78: "dancingqueen.mp4",           // ABBA - Dancing Queen
-  79: "memuero.mp4",                // La Quinta Estación - Me Muero
-  80: "besos.mp4",                  // El Canto del Loco - Besos
-  81: "sweetdreams.mp4",            // La Bouche - Sweet Dreams
-  82: "itsmylife.mp4",              // Bon Jovi - It's My Life
-  83: "colgandoentusmanos.mp4",     // Carlos Baute Marta Sánchez - Colgando en Tus Manos
-  84: "hotancold.mp4",              // Katy Perry - Hot N Cold
-  85: "cuandozarpaelamor.mp4",      // Camela - Cuando Zarpa el Amor (segunda entrada)
-  86: "iwanttobrakefree.mp4",       // Queen - I Want To Break Free
-  87: "atrevete-te.mp4",            // Calle 13 - Atrévete Te Te
-  88: "yoquierobailar.mp4",         // Sonia y Selena - Yo Quiero Bailar
-  89: "comopueddistehacermeestoami.mp4", // Alaska y Dinarama - Cómo Pudiste Hacerme Esto a Mí
-  90: "bornthisway.mp4",            // Lady Gaga - Born This Way
-  91: "pumpupthejam.mp4",           // Technotronic - Pump Up The Jam
-  92: "freedfromdesire.mp4",        // Gala - Freed From Desire
-  93: "dancingwithmyself.mp4",      // Billy Idol - Dancing With Myself
-  94: "everybody.mp4",              // Backstreet Boys - Everybody
-  95: "billiejean.mp4",             // Michael Jackson - Billie Jean
-  96: "heartofglass.mp4",           // Miley Cyrus - Heart of Glass
-  97: "despecha.mp4",               // Rosalía - Despechá
-  98: "maquillaje.mp4",             // Mecano - Maquillaje
-  99: "physical.mp4",               // Dua Lipa - Physical
+  0:  "unanochemas.mp4",
+  1:  "laplena.mp4",
+  2:  "lamarinastamorena.mp4",
+  3:  "esadiva.mp4",
+  4:  "unanocheconhugel.mp4",
+  5:  "capazvswefoundlove.mp4",
+  6:  "antesmuertaquesencilla.mp4",
+  7:  "mrvain.mp4",
+  8:  "mehasinvitadoabailar.mp4",
+  9:  "siantestehubieraconocido.mp4",
+  10: "lareina.mp4",
+  11: "vivelavida.mp4",
+  12: "zorra.mp4",
+  13: "cuandoelmartetenga.mp4",
+  14: "malamujer.mp4",
+  15: "lamorocha.mp4",
+  16: "gasolina.mp4",
+  17: "vagabundo.mp4",
+  18: "elmerengue.mp4",
+  19: "cotixcoti.mp4",
+  20: "nocheentera.mp4",
+  21: "labilirrubina.mp4",
+  22: "mariposas.mp4",
+  23: "monamour.mp4",
+  24: "titimepregunto.mp4",
+  25: "zapatillas.mp4",
+  26: "taconesrojos.mp4",
+  27: "nothinggonastopnow.mp4",
+  28: "pepas.mp4",
+  29: "tododeti.mp4",
+  30: "cuandozarpaelamor.mp4",
+  31: "abretumente.mp4",
+  32: "therythimontenight.mp4",
+  33: "mecoleenunafiesta.mp4",
+  34: "yonotepidolaluna.mp4",
+  35: "cuandobrilleelesol.mp4",
+  36: "hayqueveniralsur.mp4",
+  37: "aquienleimporta.mp4",
+  38: "vivirasiesmorirdeamor.mp4",
+  39: "seiluminaba.mp4",
+  40: "queladetengan.mp4",
+  41: "littyloscochesdelpasado.mp4",
+  42: "unbesoyunaflor.mp4",
+  43: "nodudaria.mp4",
+  44: "corazoncontento.mp4",
+  45: "mayores.mp4",
+  46: "juntos.mp4",
+  47: "caminandoporlavida.mp4",
+  48: "holdingoutforahero.mp4",
+  49: "boys.mp4",
+  50: "felicita.mp4",
+  51: "ginza.mp4",
+  52: "venezia.mp4",
+  53: "Duncan Dhu - En Algún Lugar.mp4",
+  54: "intothegrove.mp4",
+  55: "pamadrid.mp4",
+  56: "maniac.mp4",
+  57: "laflaca.mp4",
+  58: "starship.mp4",
+  59: "quijote.mp4",
+  60: "ella.mp4",
+  61: "voyamil.mp4",
+  62: "rayosdesol.mp4",
+  63: "rythmisadancer.mp4",
+  64: "saturdaynight.mp4",
+  65: "danzakuduro.mp4",
+  66: "seraporqueteamo.mp4",
+  67: "teniatantoquedarte.mp4",
+  68: "baby.mp4",
+  69: "sarandonga.mp4",
+  70: "nocontroles.mp4",
+  71: "niunasolapalabra.mp4",
+  72: "loba.mp4",
+  73: "hungup.mp4",
+  74: "puedescontarconmigo.mp4",
+  75: "sondeamores.mp4",
+  76: "girlsjustwanttohavefun.mp4",
+  77: "cachoacacho.mp4",
+  78: "dancingqueen.mp4",
+  79: "memuero.mp4",
+  80: "besos.mp4",
+  81: "sweetdreams.mp4",
+  82: "itsmylife.mp4",
+  83: "colgandoentusmanos.mp4",
+  84: "hotancold.mp4",
+  85: "cuandozarpaelamor.mp4",
+  86: "iwanttobrakefree.mp4",
+  87: "atrevete-te.mp4",
+  88: "yoquierobailar.mp4",
+  89: "comopueddistehacermeestoami.mp4",
+  90: "bornthisway.mp4",
+  91: "pumpupthejam.mp4",
+  92: "freedfromdesire.mp4",
+  93: "dancingwithmyself.mp4",
+  94: "everybody.mp4",
+  95: "billiejean.mp4",
+  96: "heartofglass.mp4",
+  97: "despecha.mp4",
+  98: "maquillaje.mp4",
+  99: "physical.mp4",
 };

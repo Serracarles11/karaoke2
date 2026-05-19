@@ -57,6 +57,7 @@ export function useKaraokeGame() {
   const drawTimeoutRef = useRef<number | null>(null);
   const previewTimeoutRef = useRef<number | null>(null);
   const hasLoadedGameRef = useRef(false);
+  const isReviewModeRef = useRef(false);
   const remainingNumbers = useMemo(
     () => allNumbers.filter((number) => !drawnNumbers.includes(number)),
     [allNumbers, drawnNumbers],
@@ -64,6 +65,23 @@ export function useKaraokeGame() {
   const drawnNumbersSet = useMemo(() => new Set(drawnNumbers), [drawnNumbers]);
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    isReviewModeRef.current = searchParams.get("revision") === "1";
+
+    if (isReviewModeRef.current) {
+      const restoreTimeout = window.setTimeout(() => {
+        setDrawnNumbers(allNumbers);
+        setCurrentNumber(null);
+        setSelectedSong(null);
+        setSpinVersion((value) => value + 1);
+        hasLoadedGameRef.current = true;
+      }, 0);
+
+      return () => {
+        window.clearTimeout(restoreTimeout);
+      };
+    }
+
     const storedState = readGameCookie();
     if (!storedState) {
       hasLoadedGameRef.current = true;
@@ -93,6 +111,7 @@ export function useKaraokeGame() {
 
   useEffect(() => {
     if (!hasLoadedGameRef.current) return;
+    if (isReviewModeRef.current) return;
 
     writeGameCookie({
       currentNumber,
@@ -171,6 +190,17 @@ export function useKaraokeGame() {
 
   function resetGame() {
     clearSpinTimers();
+
+    if (isReviewModeRef.current) {
+      setDrawnNumbers(allNumbers);
+      setPreviewNumber(null);
+      setCurrentNumber(null);
+      setSelectedSong(null);
+      setIsSpinning(false);
+      setSpinVersion((value) => value + 1);
+      return;
+    }
+
     clearGameCookie();
     setDrawnNumbers([]);
     setPreviewNumber(null);

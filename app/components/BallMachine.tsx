@@ -7,7 +7,7 @@ import {
   Events,
   World,
 } from "matter-js";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 type BallMachineProps = {
   numbers: number[];
@@ -182,9 +182,15 @@ export default function BallMachine({
   const activeNumberRef = useRef<number | null>(activeNumber);
   const selectedNumberRef = useRef<number | null>(selectedNumber);
   const drawnNumbersRef = useRef<Set<number>>(new Set(drawnNumbers));
-  const visibleNumbers = numbers.filter(
-    (id) => !drawnNumbers.includes(id) || id === selectedNumber || id === activeNumber,
-  );
+  const drawnKey = drawnNumbers.join(",");
+  const numbersKey = numbers.join(",");
+  const visibleNumbers = useMemo(() => {
+    const drawnSet = new Set(drawnNumbers);
+    return numbers.filter(
+      (id) => !drawnSet.has(id) || id === selectedNumber || id === activeNumber,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numbersKey, drawnKey, selectedNumber, activeNumber]);
 
   const rebuildBodies = useCallback(
     (width: number, height: number) => {
@@ -362,16 +368,21 @@ export default function BallMachine({
           ),
         );
         const sideBodies = Math.ceil(otherBodies.length / 2);
-        const topPadding = Math.max(170, Math.floor(height * 0.2));
-        const bottomPadding = Math.max(72, Math.floor(height * 0.08));
+        const topPadding = Math.max(120, Math.floor(height * 0.14));
+        const bottomPadding = Math.max(60, Math.floor(height * 0.07));
         const usableHeight = Math.max(120, height - topPadding - bottomPadding);
-        const rowSpacing = BALL_RADIUS * 2 + 8;
+        const MAX_COLUMNS_PER_SIDE = 3;
+        const minRowsToFit = Math.max(1, Math.ceil(sideBodies / MAX_COLUMNS_PER_SIDE));
+        const rowSpacing = Math.max(
+          BALL_RADIUS * 2 - 4,
+          Math.min(BALL_RADIUS * 2 + 8, usableHeight / minRowsToFit),
+        );
         const maxRowsPerColumn = Math.max(1, Math.floor(usableHeight / rowSpacing));
         const columnsPerSide = Math.max(1, Math.ceil(sideBodies / maxRowsPerColumn));
         const rowsPerColumn = Math.max(1, Math.ceil(sideBodies / columnsPerSide));
         const startY = Math.max(BALL_RADIUS + 8, topPadding);
-        const leftInset = Math.max(84, Math.floor(width * 0.14));
-        const rightInset = Math.max(170, Math.floor(width * 0.2));
+        const leftInset = Math.max(60, Math.floor(width * 0.08));
+        const rightInset = Math.max(110, Math.floor(width * 0.13));
         const columnSpacing = BALL_RADIUS * 2 + 10;
         const targets = new Map<number, { x: number; y: number }>();
 
@@ -397,13 +408,16 @@ export default function BallMachine({
             if (body.isStatic) {
               Body.setStatic(body, false);
             }
+            if (!body.isSensor) {
+              body.isSensor = true;
+            }
 
             Body.setVelocity(body, { x: 0, y: 0 });
             Body.setAngularVelocity(body, 0);
             Body.setAngle(body, 0);
             Body.setPosition(body, {
-              x: body.position.x + (target.x - body.position.x) * 0.04,
-              y: body.position.y + (target.y - body.position.y) * 0.04,
+              x: body.position.x + (target.x - body.position.x) * 0.12,
+              y: body.position.y + (target.y - body.position.y) * 0.12,
             });
           } else if (hiddenDrawnIds.has(id)) {
             Body.setVelocity(body, { x: 0, y: 0 });
@@ -413,22 +427,33 @@ export default function BallMachine({
               y: -WALL_THICKNESS,
             });
           } else {
-            if (body.isStatic) {
-              Body.setStatic(body, false);
-            }
-
             const sideTarget = targets.get(id);
             if (!sideTarget) {
               continue;
             }
 
+            if (body.isSensor) {
+              body.isSensor = false;
+            }
+            if (!body.isStatic) {
+              Body.setStatic(body, true);
+            }
             Body.setVelocity(body, { x: 0, y: 0 });
             Body.setAngularVelocity(body, 0);
             Body.setAngle(body, 0);
-            Body.setPosition(body, {
-              x: body.position.x + (sideTarget.x - body.position.x) * 0.12,
-              y: body.position.y + (sideTarget.y - body.position.y) * 0.12,
-            });
+
+            const dx = sideTarget.x - body.position.x;
+            const dy = sideTarget.y - body.position.y;
+            const distance = Math.hypot(dx, dy);
+
+            if (distance < 0.6) {
+              Body.setPosition(body, sideTarget);
+            } else {
+              Body.setPosition(body, {
+                x: body.position.x + dx * 0.25,
+                y: body.position.y + dy * 0.25,
+              });
+            }
           }
         }
 
@@ -438,6 +463,9 @@ export default function BallMachine({
       for (const body of bodiesRef.current.values()) {
         if (body.isStatic) {
           Body.setStatic(body, false);
+        }
+        if (body.isSensor) {
+          body.isSensor = false;
         }
 
         const speed = Math.hypot(body.velocity.x, body.velocity.y);

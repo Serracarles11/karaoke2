@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode, type SyntheticEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import confetti from "canvas-confetti";
 import { canciones } from "./canciones";
-import { formatearNumero, useKaraokeGame } from "./useKaraokeGame";
+import { useKaraokeGame } from "./useKaraokeGame";
 
 const SOUND_EFFECTS = [
   {
@@ -45,27 +46,126 @@ const SOUND_EFFECTS = [
 ] as const;
 
 const SOUND_GAIN_MULTIPLIER = 1.8;
-
-const VIDEO_FRAME_OVERRIDES: Partial<
-  Record<
-    number,
-    {
-      scale: number;
-      translateXPercent: number;
-      translateYPercent?: number;
-    }
-  >
-> = {
-  // Some downloaded karaoke videos are exported with the lyric column pushed to one side.
-  // These overrides let the frame be re-centered per song without breaking the default layout.
-  26: { scale: 1.18, translateXPercent: -14 },
+const SONG_START_OFFSETS_SECONDS: Partial<Record<number, number>> = {
+  1: 3.75,
+  7: 15,
+  11: 0.5,
+  23: 1,
+  24: 1.3,
+  27: 19,
+  31: 1,
+  12: 4,
+  34: 14,
+  35: 1.1,
+  41: 1,
+  43: 23,
+  44: 12,
+  57: 12,
+  72: 1,
+  95: 25,
 };
 
-const DEFAULT_VIDEO_FRAME = {
-  scale: 1.22,
-  translateXPercent: -18,
-  translateYPercent: 0,
-} as const;
+function getSongStartOffset(song: { numero: number; titulo: string } | null | undefined) {
+  if (!song) return 0;
+
+  return SONG_START_OFFSETS_SECONDS[song.numero] ?? 0;
+}
+
+function getBallAccent(ballNumber: number | null) {
+  if (ballNumber === null) {
+    return { light: "#ffffff", mid: "#cbd5e1", dark: "#475569" };
+  }
+
+  return ballNumber <= 19
+    ? { light: "#ff9e9e", mid: "#ef4444", dark: "#991b1b" }
+    : ballNumber <= 39
+      ? { light: "#fff1a6", mid: "#facc15", dark: "#a16207" }
+      : ballNumber <= 59
+        ? { light: "#ffb5df", mid: "#ec4899", dark: "#9d174d" }
+        : ballNumber <= 79
+          ? { light: "#b8f7b8", mid: "#22c55e", dark: "#166534" }
+          : { light: "#e5b8ff", mid: "#c026d3", dark: "#6b21a8" };
+}
+
+function CurrentSongBall({ number }: { number: number | null }) {
+  const confettiCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const accent = getBallAccent(number);
+  const label = number === null ? "--" : number.toString().padStart(2, "0");
+
+  useEffect(() => {
+    const canvas = confettiCanvasRef.current;
+    if (!canvas || number === null) return;
+
+    const fire = confetti.create(canvas, {
+      resize: true,
+      useWorker: true,
+    });
+    const options = {
+      spread: 90,
+      startVelocity: 32,
+      ticks: 90,
+      gravity: 0.85,
+      decay: 0.91,
+      scalar: 0.78,
+      origin: { x: 0.5, y: 0.5 },
+      colors: ["#ffd36b", "#ff4fa0", "#5ba3ff", "#b8f7b8", "#fffef7"],
+      disableForReducedMotion: true,
+    };
+
+    void fire({ ...options, particleCount: 70 });
+    const secondBurst = window.setTimeout(() => {
+      void fire({ ...options, particleCount: 38, startVelocity: 24, scalar: 0.62 });
+    }, 130);
+
+    return () => {
+      window.clearTimeout(secondBurst);
+    };
+  }, [number]);
+
+  return (
+    <div className="current-song-ball-float relative aspect-square w-[clamp(5.8rem,8vw,8.8rem)] shrink-0 overflow-visible">
+      <canvas
+        ref={confettiCanvasRef}
+        className="pointer-events-none absolute -inset-[55%] z-0 h-[210%] w-[210%]"
+        aria-hidden="true"
+      />
+      <div className="current-song-ball-sway relative z-10 h-full w-full">
+        <div
+          className="current-song-ball-pulse relative grid h-full w-full place-items-center rounded-full border-[3px] border-black/90 shadow-[0_0_34px_rgba(255,212,84,0.42),0_18px_40px_rgba(0,0,0,0.38)]"
+          style={{
+            background: `radial-gradient(circle at 38% 34%, #fffef7 0 12%, ${accent.light} 28%, #ffd85a 58%, ${accent.dark} 100%)`,
+          }}
+        >
+          <div className="absolute inset-[14%] rounded-full border-[2.5px] border-white/75" />
+          <div className="current-song-ball-glint absolute left-[24%] top-[22%] h-[28%] w-[28%] rounded-full bg-white/70" />
+          <div className="current-song-ball-spark absolute left-[18%] top-[16%] h-[12%] w-[12%] rounded-full bg-white/85" />
+          <span className="relative text-[clamp(1.9rem,3vw,3.3rem)] font-black leading-none tracking-[-0.08em] text-[#111] [text-shadow:0_1px_4px_rgba(255,255,255,0.22)]">
+            {label}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function seekVideoToSongStart(
+  video: HTMLVideoElement,
+  song: { numero: number; titulo: string } | null | undefined,
+) {
+  const startOffset = getSongStartOffset(song);
+  video.currentTime = startOffset;
+  return startOffset;
+}
+
+function enforceVideoStartOffset(
+  video: HTMLVideoElement,
+  song: { numero: number; titulo: string } | null | undefined,
+) {
+  const startOffset = getSongStartOffset(song);
+  if (startOffset > 0 && video.currentTime < startOffset - 0.05) {
+    video.currentTime = startOffset;
+  }
+}
 
 type CancionesManifest = {
   canciones: Array<{
@@ -88,8 +188,8 @@ export default function DetailScreen() {
     selectDrawnSong,
     selectedSong,
   } = useKaraokeGame();
-  const [downloadedNumbers, setDownloadedNumbers] = useState<number[]>([]);
   const [videoSources, setVideoSources] = useState<Record<number, string>>({});
+  const [isSongPlaying, setIsSongPlaying] = useState(false);
   const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
   const audioContextRef = useRef<AudioContext | null>(null);
   const gainNodesRef = useRef<Record<string, GainNode>>({});
@@ -103,7 +203,6 @@ export default function DetailScreen() {
       .then((response) => response.json())
       .then((data: CancionesManifest) => {
         const availableSongs = data.canciones ?? [];
-        setDownloadedNumbers(availableSongs.map((song) => song.numero));
         setVideoSources(
           Object.fromEntries(availableSongs.map((song) => [song.numero, song.src])),
         );
@@ -116,7 +215,7 @@ export default function DetailScreen() {
     if (!video) return;
 
     video.pause();
-    video.currentTime = 0;
+    seekVideoToSongStart(video, selectedSong);
   }, [selectedSong?.numero]);
 
   useEffect(() => {
@@ -200,6 +299,7 @@ export default function DetailScreen() {
   function playSong() {
     const video = songVideoRef.current;
     if (!video) return;
+    seekVideoToSongStart(video, selectedSong);
     void video.play().catch(() => {});
   }
 
@@ -207,16 +307,36 @@ export default function DetailScreen() {
     songVideoRef.current?.pause();
   }
 
+  function resumeSong() {
+    void songVideoRef.current?.play().catch(() => {});
+  }
+
   function restartSong() {
     const video = songVideoRef.current;
     if (!video) return;
-    video.currentTime = 0;
+    seekVideoToSongStart(video, selectedSong);
     void video.play().catch(() => {});
   }
 
-  const videoFrame =
-    selectedSong ? (VIDEO_FRAME_OVERRIDES[selectedSong.numero] ?? DEFAULT_VIDEO_FRAME) : DEFAULT_VIDEO_FRAME;
-  const videoTransform = `translate(${videoFrame.translateXPercent}%, ${videoFrame.translateYPercent ?? 0}%) scale(${videoFrame.scale})`;
+  function handleSongMetadataLoaded(event: SyntheticEvent<HTMLVideoElement>) {
+    seekVideoToSongStart(event.currentTarget, selectedSong);
+  }
+
+  function handleSongReady(event: SyntheticEvent<HTMLVideoElement>) {
+    enforceVideoStartOffset(event.currentTarget, selectedSong);
+  }
+
+  function getSelectedSongVideoSource() {
+    if (!selectedSong) return undefined;
+
+    const source = videoSources[selectedSong.numero];
+    if (!source) return undefined;
+
+    const startOffset = getSongStartOffset(selectedSong);
+    return startOffset > 0 ? `${source}#t=${startOffset}` : source;
+  }
+
+  const selectedSongVideoSource = getSelectedSongVideoSource();
 
   return (
     <main className="screen-shell relative min-h-screen overflow-x-hidden bg-[#08111f] text-white">
@@ -225,8 +345,8 @@ export default function DetailScreen() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,129,86,0.14),transparent_32%),radial-gradient(circle_at_80%_20%,rgba(91,163,255,0.16),transparent_30%),linear-gradient(180deg,rgba(5,10,20,0.34),rgba(5,10,20,0.92))]" />
 
       <div className="screen-stage relative z-10 mx-auto max-w-[1800px] px-[clamp(14px,1.8vw,30px)] py-[clamp(14px,1.8vw,30px)]">
-        <section className="tv-detail-grid grid min-h-screen gap-[clamp(12px,1.15vw,22px)] pb-4 lg:grid-cols-[1fr_1.3fr] xl:h-[calc(100vh-clamp(28px,3.6vw,60px))] xl:grid-cols-[1.08fr_1.45fr_0.72fr] xl:overflow-hidden">
-          <PanelCard className="tv-card flex min-h-0 flex-col overflow-hidden xl:h-full">
+        <section className="tv-detail-grid grid min-h-screen gap-[clamp(12px,1.15vw,22px)] pb-4 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,3fr)] xl:h-[calc(100vh-clamp(28px,3.6vw,60px))] xl:grid-cols-[minmax(0,0.5fr)_minmax(0,3.6fr)_minmax(0,0.4fr)] xl:overflow-hidden">
+          <PanelCard className="tv-card flex min-h-0 min-w-0 w-full flex-col overflow-hidden xl:h-full">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <p className="text-[clamp(10px,0.72vw,12px)] uppercase tracking-[0.32em] text-white/52">
@@ -239,14 +359,14 @@ export default function DetailScreen() {
               <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end">
                 <Link
                   href="/bombo"
-                  className="rounded-full bg-white/8 px-[clamp(14px,1.1vw,20px)] py-[clamp(8px,0.8vw,12px)] text-[clamp(0.8rem,0.9vw,0.98rem)] font-semibold text-white/82 transition hover:bg-white/12"
+                  className="rounded-full bg-[#ff4fa0]/14 px-[clamp(14px,1.1vw,20px)] py-[clamp(8px,0.8vw,12px)] text-[clamp(0.8rem,0.9vw,0.98rem)] font-semibold text-white/88 transition hover:bg-[#ff4fa0]/22"
                 >
                   Volver al bombo
                 </Link>
                 <button
                   type="button"
                   onClick={resetGame}
-                  className="rounded-full bg-black/24 px-[clamp(14px,1.1vw,20px)] py-[clamp(8px,0.8vw,12px)] text-[clamp(0.8rem,0.9vw,0.98rem)] font-black text-white/88 transition hover:bg-black/34"
+                  className="rounded-full bg-[#ff4fa0]/12 px-[clamp(14px,1.1vw,20px)] py-[clamp(8px,0.8vw,12px)] text-[clamp(0.8rem,0.9vw,0.98rem)] font-black text-white/88 transition hover:bg-[#ff4fa0]/20"
                 >
                   Reiniciar partida
                 </button>
@@ -284,55 +404,57 @@ export default function DetailScreen() {
             </div>
           </PanelCard>
 
-          <PanelCard className="tv-card flex min-h-0 flex-col overflow-hidden xl:h-full">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <PanelCard className="tv-card flex min-h-0 min-w-0 w-full flex-col overflow-hidden !p-2 sm:!p-2 xl:h-full">
+            <div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="min-w-0">
                 <p className="text-[clamp(10px,0.72vw,12px)] uppercase tracking-[0.32em] text-[#ffd58a]/72">
                   Centro
                 </p>
-                <h2 className="mt-2 text-[clamp(1.35rem,2vw,2.6rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
+                <h2 className="mt-2 max-w-full text-[clamp(1.35rem,2vw,2.6rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
                   {selectedSong?.titulo ?? "Sin cancion seleccionada"}
                 </h2>
                 <p className="mt-2 text-[clamp(0.88rem,1vw,1.08rem)] text-white/66">
                   {selectedSong?.artista ?? "Artista pendiente"}
                 </p>
               </div>
-              <div className="w-fit shrink-0 rounded-[1.4rem] bg-[#ffd36b]/10 px-[clamp(14px,1.2vw,22px)] py-[clamp(10px,1vw,16px)] text-center">
-                <p className="text-[clamp(10px,0.68vw,12px)] uppercase tracking-[0.3em] text-[#ffd58a]/72">
-                  Bola
-                </p>
-                <p className="mt-2 text-[clamp(2rem,3vw,4rem)] font-black leading-none tracking-[-0.08em] text-[#fff0be]">
-                  {formatearNumero(currentNumber)}
-                </p>
-              </div>
+              <CurrentSongBall number={currentNumber} />
             </div>
 
-            <div className="mt-[clamp(8px,0.7vw,14px)] min-h-0 flex-1 overflow-hidden rounded-4xl">
+            <div className="mt-[clamp(10px,0.9vw,16px)] min-h-0 w-full flex-1 overflow-hidden rounded-[2rem]">
               <div
-                className="tv-video-shell relative flex aspect-video min-h-[240px] items-center justify-center overflow-hidden bg-black md:min-h-[320px] xl:h-full xl:min-h-0"
+                className="tv-video-shell relative flex h-full min-h-[560px] w-full max-w-full overflow-hidden rounded-[2rem] border border-white/8 bg-[linear-gradient(180deg,rgba(3,7,16,0.86),rgba(0,0,0,0.96))] p-0 shadow-[0_28px_80px_rgba(0,0,0,0.42)]"
                 style={{ isolation: "isolate" }}
               >
-                {selectedSong && downloadedNumbers.includes(selectedSong.numero) ? (
-                  <div className="tv-video-frame flex h-full w-full items-center justify-center p-[clamp(14px,2.2vw,28px)]">
+                {selectedSong && selectedSongVideoSource ? (
+                  <div className="tv-video-frame relative h-full min-h-0 w-full max-w-full overflow-hidden rounded-[1.2rem] bg-black shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+                    <div className="pointer-events-none absolute inset-0 z-10 rounded-[1.2rem] border border-white/8" />
                     <video
                       ref={songVideoRef}
-                      key={selectedSong.numero}
-                      src={videoSources[selectedSong.numero]}
+                      key={`${selectedSong.numero}:${getSongStartOffset(selectedSong)}`}
+                      src={selectedSongVideoSource}
                       preload="auto"
-                      className="tv-video-element h-full w-full object-contain object-center"
+                      className="tv-video-element absolute inset-0 h-full w-full object-cover object-center"
                       playsInline
-                      style={{
-                        backgroundColor: "#000",
-                        transform: videoTransform,
-                        transformOrigin: "center center",
-                      }}
+                      onLoadedMetadata={handleSongMetadataLoaded}
+                      onLoadedData={handleSongReady}
+                      onCanPlay={handleSongReady}
+                      onPlaying={handleSongReady}
+                      onPlay={() => setIsSongPlaying(true)}
+                      onPause={() => setIsSongPlaying(false)}
+                      onEnded={() => setIsSongPlaying(false)}
+                      style={{ backgroundColor: "#000" }}
                     />
                   </div>
                 ) : (
-                  <div className="flex h-full items-center justify-center px-8 text-center text-white/56">
-                    <p className="max-w-lg text-sm leading-7">
-                      No hay video descargado para esta cancion todavia.
-                    </p>
+                  <div className="flex h-full min-h-0 w-full items-center justify-center rounded-[1.2rem] border border-dashed border-white/14 bg-black/45 px-8 text-center text-white/56">
+                    <div>
+                      <p className="text-[clamp(1rem,1.1vw,1.12rem)] font-semibold text-white/74">
+                        No hay video disponible para esta cancion.
+                      </p>
+                      <p className="mt-3 max-w-lg text-sm leading-7 text-white/50">
+                        El marco ya esta fijado para television; en cuanto exista archivo, entrara en este escenario sin deformarse.
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
@@ -348,24 +470,40 @@ export default function DetailScreen() {
               </button>
               <button
                 type="button"
-                onClick={pauseSong}
-                className="rounded-full bg-white/8 px-[clamp(16px,1.2vw,22px)] py-[clamp(10px,0.9vw,14px)] text-[clamp(0.82rem,0.92vw,1rem)] font-semibold text-white/86 transition hover:bg-white/12"
+                onClick={isSongPlaying ? pauseSong : resumeSong}
+                className="rounded-full bg-[#ff4fa0]/12 px-[clamp(16px,1.2vw,22px)] py-[clamp(10px,0.9vw,14px)] text-[clamp(0.82rem,0.92vw,1rem)] font-semibold text-white/90 transition hover:bg-[#ff4fa0]/20"
               >
-                Parar
+                {isSongPlaying ? "Parar" : "Reanudar"}
               </button>
               <button
                 type="button"
                 onClick={restartSong}
-                className="rounded-full bg-white/8 px-[clamp(16px,1.2vw,22px)] py-[clamp(10px,0.9vw,14px)] text-[clamp(0.82rem,0.92vw,1rem)] font-semibold text-white/86 transition hover:bg-white/12"
+                className="rounded-full bg-[#ff4fa0]/12 px-[clamp(16px,1.2vw,22px)] py-[clamp(10px,0.9vw,14px)] text-[clamp(0.82rem,0.92vw,1rem)] font-semibold text-white/90 transition hover:bg-[#ff4fa0]/20"
               >
                 Volver a empezar
               </button>
             </div>
           </PanelCard>
 
-          <PanelCard className="tv-card flex min-h-0 flex-col overflow-hidden lg:col-span-2 xl:col-span-1 xl:h-full">
-            <div className="flex-1 min-h-0 rounded-[1.9rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-[clamp(12px,1vw,18px)] shadow-[0_20px_60px_rgba(0,0,0,0.24)]">
-              <div className="tv-sound-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:h-full xl:auto-rows-fr xl:grid-cols-1">
+          <PanelCard className="tv-card flex min-h-0 min-w-0 w-full flex-col overflow-hidden lg:col-span-2 xl:col-span-1 xl:h-full">
+            <div className="flex-1 min-h-0 rounded-[1.9rem] rgba(255,255,255,0.02))] p-[clamp(12px,1vw,18px)] shadow-[0_20px_60px_rgba(0,0,0,0.24)]">
+              <div className="mb-[clamp(2px,0.25vw,5px)] flex min-h-[clamp(110px,14vh,170px)] items-center justify-center p-0">
+                <div className="day-off-logo-pulse relative h-[clamp(108px,14vh,164px)] w-full">
+                  <Image
+                    src="/LOGO-day-off-events-2024.webp.png"
+                    alt="Day Off Events"
+                    fill
+                    sizes="(max-width: 1024px) 28vw, 16vw"
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+              </div>
+
+              <div
+                className="tv-sound-grid mt-[clamp(34px,5vh,72px)] grid content-start sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-1"
+                style={{ gap: "clamp(28px, 3vh, 46px)" }}
+              >
                 {SOUND_EFFECTS.map((sound) => (
                   <button
                     key={sound.id}
@@ -374,13 +512,13 @@ export default function DetailScreen() {
                     className="group relative overflow-hidden rounded-[1.35rem] transition hover:-translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd36b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#120b1a]"
                     aria-label={`Reproducir ${sound.label}`}
                   >
-                    <div className="relative h-full min-h-[clamp(56px,7vh,84px)] overflow-hidden rounded-[1.35rem] border border-white/10 bg-black/24 p-[clamp(8px,0.8vw,12px)] shadow-[0_14px_34px_rgba(2,6,23,0.38)]">
+                    <div className="relative h-[clamp(58px,7.2vh,90px)] overflow-visible rounded-[0.9rem] border border-white/0 bg-transparent p-0 shadow-none">
                       <Image
                         src={sound.iconSrc}
                         alt={sound.label}
                         fill
                         sizes="(max-width: 1024px) 40vw, 18vw"
-                        className="scale-[0.8] object-contain p-[clamp(8px,0.8vw,12px)] transition duration-200 group-hover:scale-[0.84]"
+                        className="scale-[0.9] object-contain p-0 transition duration-200 group-hover:scale-[0.94]"
                       />
                     </div>
                   </button>

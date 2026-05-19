@@ -9,7 +9,7 @@ const INPUT_DIR = path.resolve(
 );
 const OUTPUT_DIR = path.resolve(
   process.cwd(),
-  outputDirArg ?? path.join("downloads", "canciones-normalizadas"),
+  outputDirArg ?? "cancionesnormalizadas",
 );
 
 // Recorte por defecto para capturas verticales con interfaz de movil.
@@ -19,6 +19,24 @@ const DEFAULT_CROP = {
   rightPct: 0.05,
   topPct: 0.23,
   bottomPct: 0.22,
+};
+
+const CROP_OVERRIDES: Record<
+  string,
+  {
+    leftPct?: number;
+    rightPct?: number;
+    topPct?: number;
+    bottomPct?: number;
+  }
+> = {
+  // Jennifer Lopez - Una Noche Mas: keep more width and avoid cutting the first letters.
+  "00 - Jennifer Lopez - Una Noche Mas.mp4": {
+    leftPct: 0.005,
+    rightPct: 0.005,
+    topPct: 0.23,
+    bottomPct: 0.22,
+  },
 };
 
 const OUTPUT_WIDTH = 720;
@@ -92,16 +110,24 @@ async function probeVideo(filePath: string) {
   return { width, height };
 }
 
-function buildCropFilter(width: number, height: number) {
-  const cropX = Math.round(width * DEFAULT_CROP.leftPct);
-  const cropY = Math.round(height * DEFAULT_CROP.topPct);
+function buildCropFilter(
+  width: number,
+  height: number,
+  cropOverride?: Partial<typeof DEFAULT_CROP>,
+) {
+  const crop = {
+    ...DEFAULT_CROP,
+    ...cropOverride,
+  };
+  const cropX = Math.round(width * crop.leftPct);
+  const cropY = Math.round(height * crop.topPct);
   const cropWidth = Math.max(
     2,
-    Math.round(width * (1 - DEFAULT_CROP.leftPct - DEFAULT_CROP.rightPct)),
+    Math.round(width * (1 - crop.leftPct - crop.rightPct)),
   );
   const cropHeight = Math.max(
     2,
-    Math.round(height * (1 - DEFAULT_CROP.topPct - DEFAULT_CROP.bottomPct)),
+    Math.round(height * (1 - crop.topPct - crop.bottomPct)),
   );
 
   const evenWidth = cropWidth - (cropWidth % 2);
@@ -120,7 +146,7 @@ async function normalizeVideo(fileName: string) {
   const inputPath = path.join(INPUT_DIR, fileName);
   const outputPath = path.join(OUTPUT_DIR, fileName);
   const { width, height } = await probeVideo(inputPath);
-  const filter = buildCropFilter(width, height);
+  const filter = buildCropFilter(width, height, CROP_OVERRIDES[fileName]);
 
   console.log(`Normalizando ${fileName} (${width}x${height})`);
 
