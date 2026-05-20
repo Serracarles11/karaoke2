@@ -369,6 +369,13 @@ export default function DetailScreen() {
     router.push("/");
   }
 
+  function confirmResetGame() {
+    const shouldReset = window.confirm("¿Seguro que quieres reiniciar la partida?");
+    if (!shouldReset) return;
+
+    resetGame();
+  }
+
   function handleSongMetadataLoaded(event: SyntheticEvent<HTMLVideoElement>) {
     seekVideoToSongStart(event.currentTarget, selectedSong);
   }
@@ -417,7 +424,7 @@ export default function DetailScreen() {
                 </button>
                 <button
                   type="button"
-                  onClick={resetGame}
+                  onClick={confirmResetGame}
                   className="rounded-full bg-[#ff4fa0]/12 px-[clamp(14px,1.1vw,20px)] py-[clamp(8px,0.8vw,12px)] text-[clamp(0.8rem,0.9vw,0.98rem)] font-black text-white/88 transition hover:bg-[#ff4fa0]/20"
                 >
                   Reiniciar partida
