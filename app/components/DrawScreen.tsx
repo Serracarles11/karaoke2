@@ -13,7 +13,6 @@ export default function DrawScreen() {
     isSpinning,
     previewNumber,
     remainingNumbers,
-    resetGame,
     selectedSong,
     spinBall,
     spinVersion,
@@ -68,12 +67,12 @@ export default function DrawScreen() {
           </p>
           <button
             type="button"
-            onClick={resetGame}
-            aria-label="Reiniciar partida"
-            title="Reiniciar partida"
+            onClick={() => router.push("/")}
+            aria-label="Ir a pantalla de carga"
+            title="Ir a pantalla de carga"
             className="mt-[clamp(12px,1.2vw,20px)] rounded-full border border-white/8 bg-black/10 px-[clamp(8px,0.8vw,12px)] py-[clamp(4px,0.5vw,6px)] text-[clamp(0.55rem,0.65vw,0.7rem)] font-medium uppercase tracking-[0.18em] text-white/22 opacity-30 backdrop-blur-sm transition hover:bg-black/34 hover:text-white/80 hover:opacity-100"
           >
-            Reiniciar
+            Pantalla de carga
           </button>
         </div>
 

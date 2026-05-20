@@ -1,11 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode, type SyntheticEvent } from "react";
-import Link from "next/link";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+  type SyntheticEvent,
+} from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
+import { useBackgroundMusic } from "./BackgroundMusicProvider";
+import BallMachine from "./BallMachine";
 import { canciones } from "./canciones";
-import { useKaraokeGame } from "./useKaraokeGame";
+import { formatearNumero, useKaraokeGame } from "./useKaraokeGame";
 
 const SOUND_EFFECTS = [
   {
@@ -45,23 +53,26 @@ const SOUND_EFFECTS = [
   },
 ] as const;
 
-const SOUND_GAIN_MULTIPLIER = 1.8;
+const SOUND_GAIN_MULTIPLIER = 2.6;
 const SONG_START_OFFSETS_SECONDS: Partial<Record<number, number>> = {
   1: 3.75,
   7: 15,
-  11: 0.5,
   23: 1,
   24: 1.3,
   27: 19,
-  31: 1,
+  31: 16,
   12: 4,
+  13: 15,
   34: 14,
   35: 1.1,
+  40: 3,
   41: 1,
   43: 23,
   44: 12,
+  55: 3,
   57: 12,
-  72: 1,
+  75: 5,
+  86: 32,
   95: 25,
 };
 
@@ -180,23 +191,38 @@ type WindowWithWebkitAudioContext = Window &
   };
 
 export default function DetailScreen() {
+  const router = useRouter();
   const {
     allNumbers,
     currentNumber,
+    drawnNumbers,
     drawnNumbersSet,
+    isSpinning,
+    previewNumber,
+    remainingNumbers,
     resetGame,
     selectDrawnSong,
     selectedSong,
+    spinBall,
+    spinVersion,
   } = useKaraokeGame();
   const [videoSources, setVideoSources] = useState<Record<number, string>>({});
   const [isSongPlaying, setIsSongPlaying] = useState(false);
+  const [isBomboVisible, setIsBomboVisible] = useState(false);
   const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
   const audioContextRef = useRef<AudioContext | null>(null);
   const gainNodesRef = useRef<Record<string, GainNode>>({});
   const mediaSourceNodesRef = useRef<Record<string, MediaElementAudioSourceNode>>({});
   const stopSoundTimeoutRef = useRef<number | null>(null);
+  const backgroundResumeTimeoutRef = useRef<number | null>(null);
   const currentSoundRef = useRef<string | null>(null);
   const songVideoRef = useRef<HTMLVideoElement | null>(null);
+  const {
+    isBackgroundMusicMuted,
+    pauseBackgroundMusic,
+    resumeBackgroundMusic,
+    toggleBackgroundMusicMute,
+  } = useBackgroundMusic();
 
   useEffect(() => {
     fetch("/canciones-manifest.json", { cache: "no-store" })
@@ -216,7 +242,7 @@ export default function DetailScreen() {
 
     video.pause();
     seekVideoToSongStart(video, selectedSong);
-  }, [selectedSong?.numero]);
+  }, [selectedSong]);
 
   useEffect(() => {
     const audioElements = audioRefs.current;
@@ -224,6 +250,10 @@ export default function DetailScreen() {
     return () => {
       if (stopSoundTimeoutRef.current !== null) {
         window.clearTimeout(stopSoundTimeoutRef.current);
+      }
+
+      if (backgroundResumeTimeoutRef.current !== null) {
+        window.clearTimeout(backgroundResumeTimeoutRef.current);
       }
 
       for (const audio of Object.values(audioElements)) {
@@ -235,6 +265,23 @@ export default function DetailScreen() {
       void audioContextRef.current?.close().catch(() => {});
     };
   }, []);
+
+  useEffect(() => {
+    if (backgroundResumeTimeoutRef.current !== null) {
+      window.clearTimeout(backgroundResumeTimeoutRef.current);
+      backgroundResumeTimeoutRef.current = null;
+    }
+
+    if (isSongPlaying) {
+      pauseBackgroundMusic();
+      return;
+    }
+
+    backgroundResumeTimeoutRef.current = window.setTimeout(() => {
+      resumeBackgroundMusic();
+      backgroundResumeTimeoutRef.current = null;
+    }, 1000);
+  }, [isSongPlaying, pauseBackgroundMusic, resumeBackgroundMusic]);
 
   function ensureBoostedAudioNode(soundId: string, audio: HTMLAudioElement) {
     const browserWindow = window as WindowWithWebkitAudioContext;
@@ -299,6 +346,7 @@ export default function DetailScreen() {
   function playSong() {
     const video = songVideoRef.current;
     if (!video) return;
+    pauseBackgroundMusic();
     seekVideoToSongStart(video, selectedSong);
     void video.play().catch(() => {});
   }
@@ -308,14 +356,17 @@ export default function DetailScreen() {
   }
 
   function resumeSong() {
+    pauseBackgroundMusic();
     void songVideoRef.current?.play().catch(() => {});
   }
 
-  function restartSong() {
-    const video = songVideoRef.current;
-    if (!video) return;
-    seekVideoToSongStart(video, selectedSong);
-    void video.play().catch(() => {});
+  function showBomboAndPauseSong() {
+    songVideoRef.current?.pause();
+    setIsBomboVisible(true);
+  }
+
+  function goToLoadingScreen() {
+    router.push("/");
   }
 
   function handleSongMetadataLoaded(event: SyntheticEvent<HTMLVideoElement>) {
@@ -357,12 +408,13 @@ export default function DetailScreen() {
                 </h2>
               </div>
               <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end">
-                <Link
-                  href="/bombo"
+                <button
+                  type="button"
+                  onClick={showBomboAndPauseSong}
                   className="rounded-full bg-[#ff4fa0]/14 px-[clamp(14px,1.1vw,20px)] py-[clamp(8px,0.8vw,12px)] text-[clamp(0.8rem,0.9vw,0.98rem)] font-semibold text-white/88 transition hover:bg-[#ff4fa0]/22"
                 >
                   Volver al bombo
-                </Link>
+                </button>
                 <button
                   type="button"
                   onClick={resetGame}
@@ -439,7 +491,10 @@ export default function DetailScreen() {
                       onLoadedData={handleSongReady}
                       onCanPlay={handleSongReady}
                       onPlaying={handleSongReady}
-                      onPlay={() => setIsSongPlaying(true)}
+                      onPlay={() => {
+                        setIsSongPlaying(true);
+                        pauseBackgroundMusic();
+                      }}
                       onPause={() => setIsSongPlaying(false)}
                       onEnded={() => setIsSongPlaying(false)}
                       style={{ backgroundColor: "#000" }}
@@ -477,10 +532,10 @@ export default function DetailScreen() {
               </button>
               <button
                 type="button"
-                onClick={restartSong}
+                onClick={toggleBackgroundMusicMute}
                 className="rounded-full bg-[#ff4fa0]/12 px-[clamp(16px,1.2vw,22px)] py-[clamp(10px,0.9vw,14px)] text-[clamp(0.82rem,0.92vw,1rem)] font-semibold text-white/90 transition hover:bg-[#ff4fa0]/20"
               >
-                Volver a empezar
+                {isBackgroundMusicMuted ? "Activar fondo" : "Mutear fondo"}
               </button>
             </div>
           </PanelCard>
@@ -539,6 +594,96 @@ export default function DetailScreen() {
           </PanelCard>
         </section>
       </div>
+
+      {isBomboVisible ? (
+        <section className="fixed inset-0 z-50 overflow-hidden bg-[#08111f] text-white">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 h-full w-full object-cover"
+          >
+            <source src="/fondo.webm" type="video/webm" />
+            <source src="/fondo.mp4" type="video/mp4" />
+          </video>
+
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,129,86,0.14),transparent_32%),radial-gradient(circle_at_80%_20%,rgba(91,163,255,0.16),transparent_30%),linear-gradient(180deg,rgba(5,10,20,0.16),rgba(5,10,20,0.72))]" />
+
+          <div className="absolute inset-0">
+            <BallMachine
+              numbers={allNumbers}
+              drawnNumbers={drawnNumbers}
+              activeNumber={previewNumber}
+              selectedNumber={currentNumber}
+              spinVersion={spinVersion}
+            />
+          </div>
+
+          <div className="absolute right-[clamp(16px,2vw,40px)] top-[clamp(16px,2vw,40px)] z-10 text-right">
+            <p className="text-[clamp(10px,0.75vw,13px)] uppercase tracking-[0.34em] text-white/55 [text-shadow:0_2px_18px_rgba(0,0,0,0.45)]">
+              Restantes
+            </p>
+            <p className="mt-2 text-[clamp(2.25rem,4.4vw,5rem)] font-black leading-none tracking-[-0.08em] text-white [text-shadow:0_4px_24px_rgba(0,0,0,0.55)]">
+              {remainingNumbers.length}
+            </p>
+            <p className="mt-[clamp(10px,1vw,16px)] text-[clamp(10px,0.75vw,13px)] uppercase tracking-[0.34em] text-white/45 [text-shadow:0_2px_18px_rgba(0,0,0,0.45)]">
+              Ultima Bola
+            </p>
+            <p className="mt-2 text-[clamp(2rem,3.7vw,4.2rem)] font-black leading-none tracking-[-0.08em] text-[#fff0be] [text-shadow:0_4px_24px_rgba(0,0,0,0.55)]">
+              {formatearNumero(currentNumber)}
+            </p>
+          </div>
+
+          {currentNumber !== null && selectedSong ? (
+            <div className="absolute left-1/2 top-[clamp(18px,2.2vw,42px)] z-10 w-[min(78vw,72rem)] -translate-x-1/2 px-4 text-center">
+              <p className="text-[clamp(11px,0.82vw,14px)] uppercase tracking-[0.42em] text-[#ffd58a]/76 [text-shadow:0_2px_18px_rgba(0,0,0,0.45)]">
+                Cancion Elegida
+              </p>
+              <p className="mt-3 text-[clamp(2rem,3.8vw,4.4rem)] font-black leading-[0.94] tracking-[-0.08em] text-white [text-shadow:0_5px_28px_rgba(0,0,0,0.62)]">
+                {selectedSong.titulo}
+              </p>
+              <p className="mt-2 text-[clamp(0.95rem,1.15vw,1.2rem)] font-medium text-white/76 [text-shadow:0_3px_18px_rgba(0,0,0,0.42)]">
+                {selectedSong.artista}
+              </p>
+            </div>
+          ) : null}
+
+          <div className="absolute inset-x-0 bottom-[clamp(22px,3vh,34px)] z-10 px-4">
+            <div className="tv-draw-center mx-auto flex w-full max-w-[58rem] flex-col items-center gap-[clamp(10px,1vw,18px)]">
+              <button
+                type="button"
+                onClick={spinBall}
+                disabled={isSpinning || remainingNumbers.length === 0}
+                className="rounded-full bg-[linear-gradient(135deg,#ffd36b,#ff8c59)] px-[clamp(24px,2.2vw,38px)] py-[clamp(12px,1.25vw,18px)] text-[clamp(0.95rem,1.15vw,1.2rem)] font-black text-[#1f1305] shadow-[0_10px_40px_rgba(255,146,89,0.32)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                {remainingNumbers.length === 0
+                  ? "No quedan bolas"
+                  : isSpinning
+                    ? "Eligiendo bola..."
+                    : "Sacar bola"}
+              </button>
+
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsBomboVisible(false)}
+                  className="tv-glass-button rounded-full border border-[#ffd36b]/36 bg-[#ffd36b]/16 px-[clamp(18px,1.5vw,24px)] py-[clamp(10px,1vw,14px)] text-[clamp(0.82rem,0.95vw,1rem)] font-black text-[#fff0be] shadow-[0_10px_40px_rgba(0,0,0,0.25)] backdrop-blur-sm transition hover:bg-[#ffd36b]/22"
+                >
+                  Volver al videoclip
+                </button>
+                <button
+                  type="button"
+                  onClick={goToLoadingScreen}
+                  className="tv-glass-button rounded-full border border-white/14 bg-white/8 px-[clamp(18px,1.5vw,24px)] py-[clamp(10px,1vw,14px)] text-[clamp(0.82rem,0.95vw,1rem)] font-semibold text-white/84 shadow-[0_10px_40px_rgba(0,0,0,0.2)] backdrop-blur-sm transition hover:bg-white/12"
+                >
+                  Pantalla de carga
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }

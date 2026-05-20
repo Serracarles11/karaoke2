@@ -111,6 +111,53 @@ body {
   -webkit-backdrop-filter: blur(8px);
 }
 
+.loading-button {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background-color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  color: #ff4fa0;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+  isolation: isolate;
+  letter-spacing: 5px;
+  outline: 2px solid rgba(255, 79, 160, 0.52);
+  overflow: hidden;
+  padding: 1em 2em;
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 1000ms;
+  z-index: 0;
+}
+
+.loading-button:hover {
+  box-shadow: 4px 5px 17px -4px #ff4fa0;
+  color: #ffffff;
+  border-color: rgba(255, 79, 160, 0.36);
+  outline: 2px solid #ff4fa0;
+  transform: scale(1.1);
+}
+
+.loading-button::before {
+  background-color: #ff4fa0;
+  content: "";
+  height: 100%;
+  left: -50px;
+  position: absolute;
+  top: 0;
+  transform: skewX(45deg);
+  transition: width 1000ms;
+  width: 0;
+  z-index: -1;
+}
+
+.loading-button:hover::before {
+  width: 250%;
+}
+
 .day-off-logo-pulse {
   animation: day-off-logo-breathe 3.6s ease-in-out infinite;
   transform-origin: center;
