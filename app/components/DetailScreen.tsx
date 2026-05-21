@@ -10,8 +10,12 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
-import { useBackgroundMusic } from "./BackgroundMusicProvider";
+import {
+  BACKGROUND_MUSIC_VOLUME,
+  useBackgroundMusic,
+} from "./BackgroundMusicProvider";
 import BallMachine from "./BallMachine";
+import ShinyText from "./ShinyText";
 import { canciones } from "./canciones";
 import { formatearNumero, useKaraokeGame } from "./useKaraokeGame";
 
@@ -54,6 +58,7 @@ const SOUND_EFFECTS = [
 ] as const;
 
 const SOUND_GAIN_MULTIPLIER = 2.6;
+const START_SONG_DELAY_MS = 2000;
 const SONG_START_OFFSETS_SECONDS: Partial<Record<number, number>> = {
   1: 3.75,
   7: 15,
@@ -178,6 +183,10 @@ function enforceVideoStartOffset(
   }
 }
 
+function setSongVideoVolume(video: HTMLVideoElement) {
+  video.volume = BACKGROUND_MUSIC_VOLUME;
+}
+
 type CancionesManifest = {
   canciones: Array<{
     numero: number;
@@ -215,6 +224,7 @@ export default function DetailScreen() {
   const mediaSourceNodesRef = useRef<Record<string, MediaElementAudioSourceNode>>({});
   const stopSoundTimeoutRef = useRef<number | null>(null);
   const backgroundResumeTimeoutRef = useRef<number | null>(null);
+  const startSongTimeoutRef = useRef<number | null>(null);
   const currentSoundRef = useRef<string | null>(null);
   const songVideoRef = useRef<HTMLVideoElement | null>(null);
   const {
@@ -240,6 +250,7 @@ export default function DetailScreen() {
     const video = songVideoRef.current;
     if (!video) return;
 
+    setSongVideoVolume(video);
     video.pause();
     seekVideoToSongStart(video, selectedSong);
   }, [selectedSong]);
@@ -254,6 +265,10 @@ export default function DetailScreen() {
 
       if (backgroundResumeTimeoutRef.current !== null) {
         window.clearTimeout(backgroundResumeTimeoutRef.current);
+      }
+
+      if (startSongTimeoutRef.current !== null) {
+        window.clearTimeout(startSongTimeoutRef.current);
       }
 
       for (const audio of Object.values(audioElements)) {
@@ -343,29 +358,58 @@ export default function DetailScreen() {
     }, sound.durationMs);
   }
 
+  function clearPendingSongStart() {
+    if (startSongTimeoutRef.current === null) return;
+
+    window.clearTimeout(startSongTimeoutRef.current);
+    startSongTimeoutRef.current = null;
+  }
+
+  function playVideoAfterDelay(video: HTMLVideoElement) {
+    setIsSongPlaying(true);
+
+    startSongTimeoutRef.current = window.setTimeout(() => {
+      startSongTimeoutRef.current = null;
+      void video.play().catch(() => {
+        setIsSongPlaying(false);
+      });
+    }, START_SONG_DELAY_MS);
+  }
+
   function playSong() {
     const video = songVideoRef.current;
     if (!video) return;
+
+    clearPendingSongStart();
     pauseBackgroundMusic();
+    setSongVideoVolume(video);
     seekVideoToSongStart(video, selectedSong);
-    void video.play().catch(() => {});
+    playVideoAfterDelay(video);
   }
 
   function pauseSong() {
+    clearPendingSongStart();
+    setIsSongPlaying(false);
     songVideoRef.current?.pause();
   }
 
   function resumeSong() {
+    clearPendingSongStart();
+    const video = songVideoRef.current;
+    if (!video) return;
+
     pauseBackgroundMusic();
-    void songVideoRef.current?.play().catch(() => {});
+    setSongVideoVolume(video);
+    playVideoAfterDelay(video);
   }
 
   function showBomboAndPauseSong() {
-    songVideoRef.current?.pause();
+    stopCurrentSong();
     setIsBomboVisible(true);
   }
 
   function stopCurrentSong() {
+    clearPendingSongStart();
     songVideoRef.current?.pause();
     setIsSongPlaying(false);
   }
@@ -393,6 +437,7 @@ export default function DetailScreen() {
   }
 
   function handleSongMetadataLoaded(event: SyntheticEvent<HTMLVideoElement>) {
+    setSongVideoVolume(event.currentTarget);
     seekVideoToSongStart(event.currentTarget, selectedSong);
   }
 
@@ -486,7 +531,15 @@ export default function DetailScreen() {
                   Centro
                 </p>
                 <h2 className="mt-2 max-w-full text-[clamp(1.35rem,2vw,2.6rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
-                  {selectedSong?.titulo ?? "Sin cancion seleccionada"}
+                  <ShinyText
+                    text={selectedSong?.titulo ?? "Sin cancion seleccionada"}
+                    speed={3.4}
+                    delay={1.4}
+                    color="#ffffff"
+                    shineColor="#ffd36b"
+                    spread={105}
+                    direction="left"
+                  />
                 </h2>
                 <p className="mt-2 text-[clamp(0.88rem,1vw,1.08rem)] text-white/66">
                   {selectedSong?.artista ?? "Artista pendiente"}
