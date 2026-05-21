@@ -207,7 +207,6 @@ export default function DetailScreen() {
     drawnNumbers,
     drawnNumbersSet,
     isSpinning,
-    previewNumber,
     remainingNumbers,
     resetGame,
     selectDrawnSong,
@@ -690,7 +689,6 @@ export default function DetailScreen() {
             <BallMachine
               numbers={allNumbers}
               drawnNumbers={drawnNumbers}
-              activeNumber={previewNumber}
               selectedNumber={currentNumber}
               spinVersion={spinVersion}
             />
