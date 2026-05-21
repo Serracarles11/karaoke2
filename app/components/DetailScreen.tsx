@@ -365,6 +365,21 @@ export default function DetailScreen() {
     setIsBomboVisible(true);
   }
 
+  function stopCurrentSong() {
+    songVideoRef.current?.pause();
+    setIsSongPlaying(false);
+  }
+
+  function handleSelectDrawnSong(number: number) {
+    stopCurrentSong();
+    selectDrawnSong(number);
+  }
+
+  function handleSpinBall() {
+    stopCurrentSong();
+    spinBall();
+  }
+
   function goToLoadingScreen() {
     router.push("/");
   }
@@ -373,6 +388,7 @@ export default function DetailScreen() {
     const shouldReset = window.confirm("¿Seguro que quieres reiniciar la partida?");
     if (!shouldReset) return;
 
+    stopCurrentSong();
     resetGame();
   }
 
@@ -443,7 +459,7 @@ export default function DetailScreen() {
                     <button
                       key={number}
                       type="button"
-                      onClick={() => selectDrawnSong(number)}
+                      onClick={() => handleSelectDrawnSong(number)}
                       disabled={!isDrawn || !song}
                       className={`aspect-square min-h-[clamp(2rem,2.35vw,2.9rem)] rounded-full text-center transition ${
                         active
@@ -660,7 +676,7 @@ export default function DetailScreen() {
             <div className="tv-draw-center mx-auto flex w-full max-w-[58rem] flex-col items-center gap-[clamp(10px,1vw,18px)]">
               <button
                 type="button"
-                onClick={spinBall}
+                onClick={handleSpinBall}
                 disabled={isSpinning || remainingNumbers.length === 0}
                 className="rounded-full bg-[linear-gradient(135deg,#ffd36b,#ff8c59)] px-[clamp(24px,2.2vw,38px)] py-[clamp(12px,1.25vw,18px)] text-[clamp(0.95rem,1.15vw,1.2rem)] font-black text-[#1f1305] shadow-[0_10px_40px_rgba(255,146,89,0.32)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-45"
               >
