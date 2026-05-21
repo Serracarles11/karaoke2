@@ -467,9 +467,6 @@ export default function DetailScreen() {
           <PanelCard className="tv-card flex min-h-0 min-w-0 w-full flex-col overflow-hidden xl:h-full">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
-                <p className="text-[clamp(10px,0.72vw,12px)] uppercase tracking-[0.32em] text-white/52">
-                  Izquierda
-                </p>
                 <h2 className="mt-1 text-[clamp(1.2rem,1.7vw,2.1rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
                   Bolas Que Ya Han Salido
                 </h2>
@@ -526,9 +523,6 @@ export default function DetailScreen() {
           <PanelCard className="tv-card flex min-h-0 min-w-0 w-full flex-col overflow-hidden !p-2 sm:!p-2 xl:h-full">
             <div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="min-w-0">
-                <p className="text-[clamp(10px,0.72vw,12px)] uppercase tracking-[0.32em] text-[#ffd58a]/72">
-                  Centro
-                </p>
                 <h2 className="mt-2 max-w-full text-[clamp(1.35rem,2vw,2.6rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
                   <ShinyText
                     text={selectedSong?.titulo ?? "Sin cancion seleccionada"}
