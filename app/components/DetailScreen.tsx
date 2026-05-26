@@ -58,6 +58,7 @@ const SOUND_EFFECTS = [
 ] as const;
 
 const SOUND_GAIN_MULTIPLIER = 2.6;
+const DUCKED_SONG_VIDEO_VOLUME = 0.12;
 const START_SONG_DELAY_MS = 2000;
 const SONG_START_OFFSETS_SECONDS: Partial<Record<number, number>> = {
   1: 3.75,
@@ -227,8 +228,10 @@ export default function DetailScreen() {
   const currentSoundRef = useRef<string | null>(null);
   const songVideoRef = useRef<HTMLVideoElement | null>(null);
   const {
+    duckBackgroundMusic,
     isBackgroundMusicMuted,
     pauseBackgroundMusic,
+    restoreBackgroundMusicVolume,
     resumeBackgroundMusic,
     toggleBackgroundMusicMute,
   } = useBackgroundMusic();
@@ -276,9 +279,10 @@ export default function DetailScreen() {
         audio.currentTime = 0;
       }
 
+      restoreBackgroundMusicVolume();
       void audioContextRef.current?.close().catch(() => {});
     };
-  }, []);
+  }, [restoreBackgroundMusicVolume]);
 
   useEffect(() => {
     if (backgroundResumeTimeoutRef.current !== null) {
@@ -336,6 +340,12 @@ export default function DetailScreen() {
       }
     }
 
+    const songVideo = songVideoRef.current;
+    if (songVideo && isSongPlaying) {
+      songVideo.volume = DUCKED_SONG_VIDEO_VOLUME;
+    }
+    duckBackgroundMusic();
+
     currentSoundRef.current = soundId;
     audio.currentTime = 0;
     audio.volume = 1;
@@ -350,6 +360,10 @@ export default function DetailScreen() {
     stopSoundTimeoutRef.current = window.setTimeout(() => {
       audio.pause();
       audio.currentTime = 0;
+      if (songVideoRef.current && !songVideoRef.current.paused) {
+        setSongVideoVolume(songVideoRef.current);
+      }
+      restoreBackgroundMusicVolume();
       stopSoundTimeoutRef.current = null;
       if (currentSoundRef.current === soundId) {
         currentSoundRef.current = null;

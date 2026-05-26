@@ -16,17 +16,22 @@ const BACKGROUND_MUSIC_SRC =
 export const BACKGROUND_MUSIC_VOLUME = 1;
 
 type BackgroundMusicContextValue = {
+  duckBackgroundMusic: () => void;
   isBackgroundMusicMuted: boolean;
   pauseBackgroundMusic: () => void;
+  restoreBackgroundMusicVolume: () => void;
   resumeBackgroundMusic: () => void;
   toggleBackgroundMusicMute: () => void;
 };
 
 const BackgroundMusicContext = createContext<BackgroundMusicContextValue | null>(null);
 
+const DUCKED_BACKGROUND_MUSIC_VOLUME = 0.14;
+
 export function BackgroundMusicProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isActivatedRef = useRef(false);
+  const isDuckedRef = useRef(false);
   const isManuallyPausedRef = useRef(false);
   const [isBackgroundMusicMuted, setIsBackgroundMusicMuted] = useState(false);
 
@@ -41,13 +46,31 @@ export function BackgroundMusicProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    audio.volume = BACKGROUND_MUSIC_VOLUME;
+    audio.volume = isDuckedRef.current
+      ? DUCKED_BACKGROUND_MUSIC_VOLUME
+      : BACKGROUND_MUSIC_VOLUME;
     void audio.play().catch(() => {});
   }, [isBackgroundMusicMuted]);
+
+  const duckBackgroundMusic = useCallback(() => {
+    isDuckedRef.current = true;
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = DUCKED_BACKGROUND_MUSIC_VOLUME;
+  }, []);
 
   const pauseBackgroundMusic = useCallback(() => {
     isManuallyPausedRef.current = true;
     audioRef.current?.pause();
+  }, []);
+
+  const restoreBackgroundMusicVolume = useCallback(() => {
+    isDuckedRef.current = false;
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = BACKGROUND_MUSIC_VOLUME;
   }, []);
 
   const resumeBackgroundMusic = useCallback(() => {
@@ -82,14 +105,18 @@ export function BackgroundMusicProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({
+      duckBackgroundMusic,
       isBackgroundMusicMuted,
       pauseBackgroundMusic,
+      restoreBackgroundMusicVolume,
       resumeBackgroundMusic,
       toggleBackgroundMusicMute,
     }),
     [
+      duckBackgroundMusic,
       isBackgroundMusicMuted,
       pauseBackgroundMusic,
+      restoreBackgroundMusicVolume,
       resumeBackgroundMusic,
       toggleBackgroundMusicMute,
     ],
