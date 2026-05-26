@@ -533,22 +533,22 @@ export default function DetailScreen() {
               </div>
             </div>
 
-            <div className="mt-[clamp(4px,0.36vw,8px)] bg-transparent p-0 shadow-none">
-              <div className="flex flex-col gap-1">
+            <div className="mt-[clamp(2px,0.24vw,5px)] bg-transparent p-0 shadow-none">
+              <div className="flex flex-col gap-0.5">
                 <div className="shrink-0">
 
                 </div>
 
-                <div className="grid grid-cols-5 gap-1.5">
+                <div className="grid grid-cols-5 gap-1">
                 {SOUND_EFFECTS.map((sound) => (
                   <button
                     key={sound.id}
                     type="button"
                     onClick={() => playSoundPreview(sound.id)}
-                    className="group flex min-h-[56px] items-center justify-center overflow-hidden rounded-[0.95rem] border border-white/10 bg-black/18 px-2 py-1.5 transition hover:-translate-y-[1px] hover:bg-black/26 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd36b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#120b1a]"
+                    className="group flex min-h-[50px] items-center justify-center overflow-hidden rounded-[0.9rem] border border-white/10 bg-black/18 px-2 py-1 transition hover:-translate-y-[1px] hover:bg-black/26 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd36b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#120b1a]"
                     aria-label={`Reproducir ${sound.label}`}
                   >
-                    <div className="relative h-[30px] w-[30px] shrink-0 overflow-visible">
+                    <div className="relative h-[28px] w-[28px] shrink-0 overflow-visible">
                       <Image
                         src={sound.iconSrc}
                         alt={sound.label}
