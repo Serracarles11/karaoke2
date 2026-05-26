@@ -139,7 +139,7 @@ function CurrentSongBall({ number }: { number: number | null }) {
   }, [number]);
 
   return (
-    <div className="current-song-ball-float relative aspect-square w-[clamp(5.8rem,8vw,8.8rem)] shrink-0 overflow-visible">
+    <div className="current-song-ball-float relative aspect-square w-[clamp(4.8rem,6.4vw,7.2rem)] shrink-0 overflow-visible">
       <canvas
         ref={confettiCanvasRef}
         className="pointer-events-none absolute -inset-[55%] z-0 h-[210%] w-[210%]"
@@ -463,7 +463,7 @@ export default function DetailScreen() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,129,86,0.14),transparent_32%),radial-gradient(circle_at_80%_20%,rgba(91,163,255,0.16),transparent_30%),linear-gradient(180deg,rgba(5,10,20,0.34),rgba(5,10,20,0.92))]" />
 
       <div className="screen-stage relative z-10 mx-auto h-full max-w-[1800px] px-[clamp(14px,1.8vw,30px)] py-[clamp(14px,1.8vw,30px)]">
-        <section className="tv-detail-grid grid h-full min-h-0 gap-[clamp(12px,1.15vw,22px)] overflow-hidden lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+        <section className="tv-detail-grid grid h-full min-h-0 gap-[clamp(12px,1.15vw,22px)] overflow-hidden lg:grid-cols-[minmax(0,0.74fr)_minmax(0,1.26fr)]">
           <PanelCard className="tv-card flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden !p-3 sm:!p-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
@@ -526,25 +526,25 @@ export default function DetailScreen() {
                 </div>
 
                 <div className="grid grid-cols-5 gap-1.5">
-                  {SOUND_EFFECTS.map((sound) => (
-                    <button
-                      key={sound.id}
-                      type="button"
-                      onClick={() => playSoundPreview(sound.id)}
-                      className="group flex min-h-[56px] items-center justify-center overflow-hidden rounded-[0.95rem] border border-white/10 bg-black/18 px-2 py-1.5 transition hover:-translate-y-[1px] hover:bg-black/26 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd36b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#120b1a]"
-                      aria-label={`Reproducir ${sound.label}`}
-                    >
-                      <div className="relative h-[30px] w-[30px] shrink-0 overflow-visible">
-                        <Image
-                          src={sound.iconSrc}
-                          alt={sound.label}
-                          fill
-                          sizes="64px"
-                          className="scale-[0.92] object-contain p-0 transition duration-200 group-hover:scale-[0.98]"
-                        />
-                      </div>
-                    </button>
-                  ))}
+                {SOUND_EFFECTS.map((sound) => (
+                  <button
+                    key={sound.id}
+                    type="button"
+                    onClick={() => playSoundPreview(sound.id)}
+                    className="group flex min-h-[56px] items-center justify-center overflow-hidden rounded-[0.95rem] border border-white/10 bg-black/18 px-2 py-1.5 transition hover:-translate-y-[1px] hover:bg-black/26 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd36b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#120b1a]"
+                    aria-label={`Reproducir ${sound.label}`}
+                  >
+                    <div className="relative h-[30px] w-[30px] shrink-0 overflow-visible">
+                      <Image
+                        src={sound.iconSrc}
+                        alt={sound.label}
+                        fill
+                        sizes="64px"
+                        className="scale-[0.92] object-contain p-0 transition duration-200 group-hover:scale-[0.98]"
+                      />
+                    </div>
+                  </button>
+                ))}
                 </div>
               </div>
             </div>
@@ -562,9 +562,9 @@ export default function DetailScreen() {
           </PanelCard>
 
           <PanelCard className="tv-card flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden !p-1 sm:!p-2">
-            <div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="min-w-0">
-                <h2 className="mt-2 max-w-full text-[clamp(1.35rem,2vw,2.6rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
+            <div className="relative flex min-w-0 items-start justify-center pr-[clamp(5.2rem,7vw,8rem)] pt-2">
+              <div className="min-w-0 text-center">
+                <h2 className="mt-1 max-w-full text-[clamp(1.25rem,1.8vw,2.35rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
                   <ShinyText
                     text={selectedSong?.titulo ?? "Sin cancion seleccionada"}
                     speed={3.4}
@@ -575,14 +575,16 @@ export default function DetailScreen() {
                     direction="left"
                   />
                 </h2>
-                <p className="mt-2 text-[clamp(0.88rem,1vw,1.08rem)] text-white/66">
+                <p className="mt-1 text-[clamp(0.82rem,0.92vw,1rem)] text-white/66">
                   {selectedSong?.artista ?? "Artista pendiente"}
                 </p>
               </div>
-              <CurrentSongBall number={currentNumber} />
+              <div className="absolute right-0 top-0 z-20">
+                <CurrentSongBall number={currentNumber} />
+              </div>
             </div>
 
-            <div className="mt-[clamp(8px,0.8vw,14px)] min-h-0 w-full flex-1 overflow-hidden rounded-[2rem]">
+            <div className="mt-[clamp(4px,0.45vw,8px)] min-h-0 w-full flex-1 overflow-hidden rounded-[2rem]">
               <div
                 className="tv-video-shell relative flex h-full min-h-[520px] w-full max-w-full overflow-hidden rounded-[2rem] border border-white/8 bg-[linear-gradient(180deg,rgba(3,7,16,0.86),rgba(0,0,0,0.96))] p-0 shadow-[0_28px_80px_rgba(0,0,0,0.42)] lg:min-h-0"
                 style={{ isolation: "isolate" }}
@@ -595,7 +597,7 @@ export default function DetailScreen() {
                       key={`${selectedSong.numero}:${getSongStartOffset(selectedSong)}`}
                       src={selectedSongVideoSource}
                       preload="auto"
-                      className="tv-video-element absolute inset-0 h-full w-full scale-[1.14] object-cover object-center"
+                      className="tv-video-element absolute inset-0 h-full w-full scale-[1.3] object-cover object-center"
                       playsInline
                       onLoadedMetadata={handleSongMetadataLoaded}
                       onLoadedData={handleSongReady}
@@ -625,25 +627,25 @@ export default function DetailScreen() {
               </div>
             </div>
 
-            <div className="mt-[clamp(8px,0.7vw,14px)] flex flex-wrap gap-3">
+            <div className="mt-[clamp(4px,0.45vw,8px)] flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={playSong}
-                className="rounded-full bg-[#ffd36b]/18 px-[clamp(16px,1.2vw,22px)] py-[clamp(10px,0.9vw,14px)] text-[clamp(0.82rem,0.92vw,1rem)] font-semibold text-[#fff0be] transition hover:bg-[#ffd36b]/26"
+                className="rounded-full bg-[#ffd36b]/18 px-[clamp(14px,1vw,20px)] py-[clamp(8px,0.72vw,11px)] text-[clamp(0.76rem,0.84vw,0.92rem)] font-semibold text-[#fff0be] transition hover:bg-[#ffd36b]/26"
               >
                 Empezar cancion
               </button>
               <button
                 type="button"
                 onClick={isSongPlaying ? pauseSong : resumeSong}
-                className="rounded-full bg-[#ff4fa0]/12 px-[clamp(16px,1.2vw,22px)] py-[clamp(10px,0.9vw,14px)] text-[clamp(0.82rem,0.92vw,1rem)] font-semibold text-white/90 transition hover:bg-[#ff4fa0]/20"
+                className="rounded-full bg-[#ff4fa0]/12 px-[clamp(14px,1vw,20px)] py-[clamp(8px,0.72vw,11px)] text-[clamp(0.76rem,0.84vw,0.92rem)] font-semibold text-white/90 transition hover:bg-[#ff4fa0]/20"
               >
                 {isSongPlaying ? "Parar" : "Reanudar"}
               </button>
               <button
                 type="button"
                 onClick={toggleBackgroundMusicMute}
-                className="rounded-full bg-[#ff4fa0]/12 px-[clamp(16px,1.2vw,22px)] py-[clamp(10px,0.9vw,14px)] text-[clamp(0.82rem,0.92vw,1rem)] font-semibold text-white/90 transition hover:bg-[#ff4fa0]/20"
+                className="rounded-full bg-[#ff4fa0]/12 px-[clamp(14px,1vw,20px)] py-[clamp(8px,0.72vw,11px)] text-[clamp(0.76rem,0.84vw,0.92rem)] font-semibold text-white/90 transition hover:bg-[#ff4fa0]/20"
               >
                 {isBackgroundMusicMuted ? "Activar fondo" : "Mutear fondo"}
               </button>

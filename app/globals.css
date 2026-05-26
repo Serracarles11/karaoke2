@@ -95,7 +95,7 @@ body {
   height: 100%;
   align-items: center;
   justify-content: center;
-  padding: 18px;
+  padding: 0;
 }
 
 .tv-video-element {
