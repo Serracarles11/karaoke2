@@ -140,7 +140,7 @@ function CurrentSongBall({ number }: { number: number | null }) {
   }, [number]);
 
   return (
-    <div className="current-song-ball-float relative aspect-square w-[clamp(4.8rem,6.4vw,7.2rem)] shrink-0 overflow-visible">
+    <div className="current-song-ball-float relative aspect-square w-[clamp(5.8rem,7.6vw,8.6rem)] shrink-0 overflow-visible">
       <canvas
         ref={confettiCanvasRef}
         className="pointer-events-none absolute -inset-[55%] z-0 h-[210%] w-[210%]"
@@ -479,9 +479,9 @@ export default function DetailScreen() {
       <div className="screen-stage relative z-10 mx-auto h-full max-w-[1800px] px-[clamp(14px,1.8vw,30px)] py-[clamp(14px,1.8vw,30px)]">
         <section className="tv-detail-grid grid h-full min-h-0 gap-[clamp(12px,1.15vw,22px)] overflow-hidden lg:grid-cols-[minmax(0,0.74fr)_minmax(0,1.26fr)]">
           <PanelCard className="tv-card flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden !p-3 sm:!p-4">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0">
-                <h2 className="text-[clamp(1.1rem,1.55vw,1.9rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0 flex-1 pr-2">
+                <h2 className="inline-flex w-fit rounded-[1rem] bg-black/26 px-[clamp(10px,0.9vw,16px)] py-[clamp(6px,0.55vw,10px)] text-[clamp(1.3rem,1.85vw,2.25rem)] font-black leading-[0.98] tracking-[-0.07em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.22)] backdrop-blur-sm [text-shadow:0_4px_18px_rgba(0,0,0,0.42)]">
                   Bolas Que Ya Han Salido
                 </h2>
               </div>
@@ -576,7 +576,7 @@ export default function DetailScreen() {
           </PanelCard>
 
           <PanelCard className="tv-card flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden !p-1 sm:!p-2">
-            <div className="relative flex min-w-0 items-start justify-center pr-[clamp(5.2rem,7vw,8rem)] pt-2">
+            <div className="relative flex min-w-0 items-start justify-center pr-[clamp(6.2rem,8vw,9.2rem)] pt-[clamp(0.7rem,1vw,1.15rem)]">
               <div className="min-w-0 text-center">
                 <h2 className="mt-1 max-w-full text-[clamp(1.25rem,1.8vw,2.35rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
                   <ShinyText
@@ -593,7 +593,7 @@ export default function DetailScreen() {
                   {selectedSong?.artista ?? "Artista pendiente"}
                 </p>
               </div>
-              <div className="absolute right-0 top-0 z-20">
+              <div className="absolute right-0 top-[clamp(0.35rem,0.55vw,0.7rem)] z-20">
                 <CurrentSongBall number={currentNumber} />
               </div>
             </div>
