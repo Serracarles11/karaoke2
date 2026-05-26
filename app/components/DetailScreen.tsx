@@ -457,17 +457,17 @@ export default function DetailScreen() {
   const selectedSongVideoSource = getSelectedSongVideoSource();
 
   return (
-    <main className="screen-shell relative min-h-screen overflow-x-hidden bg-[#08111f] text-white">
+    <main className="screen-shell relative h-dvh overflow-hidden bg-[#08111f] text-white">
       <div className="absolute inset-0 bg-[url('/fondo-bolas.webp')] bg-cover bg-center bg-no-repeat" />
 
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(245,129,86,0.14),transparent_32%),radial-gradient(circle_at_80%_20%,rgba(91,163,255,0.16),transparent_30%),linear-gradient(180deg,rgba(5,10,20,0.34),rgba(5,10,20,0.92))]" />
 
-      <div className="screen-stage relative z-10 mx-auto max-w-[1800px] px-[clamp(14px,1.8vw,30px)] py-[clamp(14px,1.8vw,30px)]">
-        <section className="tv-detail-grid grid min-h-screen gap-[clamp(12px,1.15vw,22px)] pb-4 lg:grid-cols-[minmax(0,0.6fr)_minmax(0,3fr)] xl:h-[calc(100vh-clamp(28px,3.6vw,60px))] xl:grid-cols-[minmax(0,0.5fr)_minmax(0,3.6fr)_minmax(0,0.4fr)] xl:overflow-hidden">
-          <PanelCard className="tv-card flex min-h-0 min-w-0 w-full flex-col overflow-hidden xl:h-full">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="screen-stage relative z-10 mx-auto h-full max-w-[1800px] px-[clamp(14px,1.8vw,30px)] py-[clamp(14px,1.8vw,30px)]">
+        <section className="tv-detail-grid grid h-full min-h-0 gap-[clamp(12px,1.15vw,22px)] overflow-hidden lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+          <PanelCard className="tv-card flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden !p-3 sm:!p-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
-                <h2 className="mt-1 text-[clamp(1.2rem,1.7vw,2.1rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
+                <h2 className="text-[clamp(1.1rem,1.55vw,1.9rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
                   Bolas Que Ya Han Salido
                 </h2>
               </div>
@@ -475,22 +475,22 @@ export default function DetailScreen() {
                 <button
                   type="button"
                   onClick={showBomboAndPauseSong}
-                  className="rounded-full bg-[#ff4fa0]/14 px-[clamp(14px,1.1vw,20px)] py-[clamp(8px,0.8vw,12px)] text-[clamp(0.8rem,0.9vw,0.98rem)] font-semibold text-white/88 transition hover:bg-[#ff4fa0]/22"
+                  className="rounded-full bg-[#ff4fa0]/14 px-[clamp(12px,1vw,18px)] py-[clamp(6px,0.65vw,10px)] text-[clamp(0.76rem,0.84vw,0.92rem)] font-semibold text-white/88 transition hover:bg-[#ff4fa0]/22"
                 >
                   Volver al bombo
                 </button>
                 <button
                   type="button"
                   onClick={confirmResetGame}
-                  className="rounded-full bg-[#ff4fa0]/12 px-[clamp(14px,1.1vw,20px)] py-[clamp(8px,0.8vw,12px)] text-[clamp(0.8rem,0.9vw,0.98rem)] font-black text-white/88 transition hover:bg-[#ff4fa0]/20"
+                  className="rounded-full bg-[#ff4fa0]/12 px-[clamp(12px,1vw,18px)] py-[clamp(6px,0.65vw,10px)] text-[clamp(0.76rem,0.84vw,0.92rem)] font-black text-white/88 transition hover:bg-[#ff4fa0]/20"
                 >
                   Reiniciar partida
                 </button>
               </div>
             </div>
 
-            <div className="mt-[clamp(12px,1vw,18px)] flex-1 min-h-0 rounded-[2rem] bg-[rgba(8,18,40,0.78)] p-[clamp(10px,0.9vw,16px)] shadow-[0_22px_60px_rgba(4,10,24,0.38)]">
-              <div className="grid grid-cols-5 gap-[clamp(5px,0.45vw,9px)] sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:h-full xl:content-between">
+            <div className="mt-[clamp(8px,0.7vw,12px)] flex-1 min-h-0 overflow-hidden rounded-[2rem] bg-[rgba(8,18,40,0.78)] p-[clamp(8px,0.7vw,12px)] shadow-[0_22px_60px_rgba(4,10,24,0.38)]">
+              <div className="grid h-full grid-cols-5 justify-items-center content-start gap-[clamp(6px,0.48vw,10px)] sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10">
                 {allNumbers.map((number) => {
                   const song = canciones[number];
                   const isDrawn = drawnNumbersSet.has(number);
@@ -502,7 +502,7 @@ export default function DetailScreen() {
                       type="button"
                       onClick={() => handleSelectDrawnSong(number)}
                       disabled={!isDrawn || !song}
-                      className={`aspect-square min-h-[clamp(2rem,2.35vw,2.9rem)] rounded-full text-center transition ${
+                      className={`flex h-[clamp(2.9rem,3.5vw,4.1rem)] w-[clamp(2.9rem,3.5vw,4.1rem)] items-center justify-center rounded-full text-center transition ${
                         active
                           ? "bg-[#ff4fa0] text-white shadow-[0_10px_30px_rgba(255,79,160,0.28)]"
                         : isDrawn
@@ -510,7 +510,7 @@ export default function DetailScreen() {
                           : "bg-black/72 text-white"
                       } ${isDrawn ? "cursor-pointer" : "cursor-default"} p-0.5`}
                     >
-                      <span className="block text-[clamp(0.82rem,1vw,1.18rem)] font-black tracking-[-0.08em]">
+                      <span className="block text-[clamp(0.98rem,1.22vw,1.42rem)] font-black leading-none tracking-[-0.08em]">
                         {number.toString().padStart(2, "0")}
                       </span>
                     </button>
@@ -518,9 +518,50 @@ export default function DetailScreen() {
                 })}
               </div>
             </div>
+
+            <div className="mt-[clamp(4px,0.36vw,8px)] bg-transparent p-0 shadow-none">
+              <div className="flex flex-col gap-1">
+                <div className="shrink-0">
+
+                </div>
+
+                <div className="grid grid-cols-5 gap-1.5">
+                  {SOUND_EFFECTS.map((sound) => (
+                    <button
+                      key={sound.id}
+                      type="button"
+                      onClick={() => playSoundPreview(sound.id)}
+                      className="group flex min-h-[56px] items-center justify-center overflow-hidden rounded-[0.95rem] border border-white/10 bg-black/18 px-2 py-1.5 transition hover:-translate-y-[1px] hover:bg-black/26 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd36b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#120b1a]"
+                      aria-label={`Reproducir ${sound.label}`}
+                    >
+                      <div className="relative h-[30px] w-[30px] shrink-0 overflow-visible">
+                        <Image
+                          src={sound.iconSrc}
+                          alt={sound.label}
+                          fill
+                          sizes="64px"
+                          className="scale-[0.92] object-contain p-0 transition duration-200 group-hover:scale-[0.98]"
+                        />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {SOUND_EFFECTS.map((sound) => (
+              <audio
+                key={sound.id}
+                ref={(element) => {
+                  audioRefs.current[sound.id] = element;
+                }}
+                preload="auto"
+                src={sound.src}
+              />
+            ))}
           </PanelCard>
 
-          <PanelCard className="tv-card flex min-h-0 min-w-0 w-full flex-col overflow-hidden !p-2 sm:!p-2 xl:h-full">
+          <PanelCard className="tv-card flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden !p-1 sm:!p-2">
             <div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="min-w-0">
                 <h2 className="mt-2 max-w-full text-[clamp(1.35rem,2vw,2.6rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
@@ -541,9 +582,9 @@ export default function DetailScreen() {
               <CurrentSongBall number={currentNumber} />
             </div>
 
-            <div className="mt-[clamp(10px,0.9vw,16px)] min-h-0 w-full flex-1 overflow-hidden rounded-[2rem]">
+            <div className="mt-[clamp(8px,0.8vw,14px)] min-h-0 w-full flex-1 overflow-hidden rounded-[2rem]">
               <div
-                className="tv-video-shell relative flex h-full min-h-[560px] w-full max-w-full overflow-hidden rounded-[2rem] border border-white/8 bg-[linear-gradient(180deg,rgba(3,7,16,0.86),rgba(0,0,0,0.96))] p-0 shadow-[0_28px_80px_rgba(0,0,0,0.42)]"
+                className="tv-video-shell relative flex h-full min-h-[520px] w-full max-w-full overflow-hidden rounded-[2rem] border border-white/8 bg-[linear-gradient(180deg,rgba(3,7,16,0.86),rgba(0,0,0,0.96))] p-0 shadow-[0_28px_80px_rgba(0,0,0,0.42)] lg:min-h-0"
                 style={{ isolation: "isolate" }}
               >
                 {selectedSong && selectedSongVideoSource ? (
@@ -554,7 +595,7 @@ export default function DetailScreen() {
                       key={`${selectedSong.numero}:${getSongStartOffset(selectedSong)}`}
                       src={selectedSongVideoSource}
                       preload="auto"
-                      className="tv-video-element absolute inset-0 h-full w-full object-cover object-center"
+                      className="tv-video-element absolute inset-0 h-full w-full scale-[1.14] object-cover object-center"
                       playsInline
                       onLoadedMetadata={handleSongMetadataLoaded}
                       onLoadedData={handleSongReady}
@@ -607,59 +648,6 @@ export default function DetailScreen() {
                 {isBackgroundMusicMuted ? "Activar fondo" : "Mutear fondo"}
               </button>
             </div>
-          </PanelCard>
-
-          <PanelCard className="tv-card flex min-h-0 min-w-0 w-full flex-col overflow-hidden lg:col-span-2 xl:col-span-1 xl:h-full">
-            <div className="flex-1 min-h-0 rounded-[1.9rem] rgba(255,255,255,0.02))] p-[clamp(12px,1vw,18px)] shadow-[0_20px_60px_rgba(0,0,0,0.24)]">
-              <div className="mb-[clamp(2px,0.25vw,5px)] flex min-h-[clamp(110px,14vh,170px)] items-center justify-center p-0">
-                <div className="day-off-logo-pulse relative h-[clamp(108px,14vh,164px)] w-full">
-                  <Image
-                    src="/LOGO-day-off-events-2024.webp.png"
-                    alt="Day Off Events"
-                    fill
-                    sizes="(max-width: 1024px) 28vw, 16vw"
-                    className="object-contain"
-                    priority
-                  />
-                </div>
-              </div>
-
-              <div
-                className="tv-sound-grid mt-[clamp(34px,5vh,72px)] grid content-start sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-1"
-                style={{ gap: "clamp(28px, 3vh, 46px)" }}
-              >
-                {SOUND_EFFECTS.map((sound) => (
-                  <button
-                    key={sound.id}
-                    type="button"
-                    onClick={() => playSoundPreview(sound.id)}
-                    className="group relative overflow-hidden rounded-[1.35rem] transition hover:-translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd36b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#120b1a]"
-                    aria-label={`Reproducir ${sound.label}`}
-                  >
-                    <div className="relative h-[clamp(58px,7.2vh,90px)] overflow-visible rounded-[0.9rem] border border-white/0 bg-transparent p-0 shadow-none">
-                      <Image
-                        src={sound.iconSrc}
-                        alt={sound.label}
-                        fill
-                        sizes="(max-width: 1024px) 40vw, 18vw"
-                        className="scale-[0.9] object-contain p-0 transition duration-200 group-hover:scale-[0.94]"
-                      />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {SOUND_EFFECTS.map((sound) => (
-              <audio
-                key={sound.id}
-                ref={(element) => {
-                  audioRefs.current[sound.id] = element;
-                }}
-                preload="auto"
-                src={sound.src}
-              />
-            ))}
           </PanelCard>
         </section>
       </div>

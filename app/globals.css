@@ -27,12 +27,15 @@ body {
 
 html,
 body {
+  height: 100%;
   min-height: 100%;
 }
 
 .screen-shell {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -50,14 +53,15 @@ body {
   z-index: 10;
   margin: 0 auto;
   max-width: 1800px;
+  height: 100%;
   padding: 18px;
 }
 
 .tv-detail-grid {
   display: grid;
   gap: 18px;
-  min-height: 100vh;
-  padding-bottom: 16px;
+  min-height: 0;
+  height: 100%;
 }
 
 .tv-draw-center {
@@ -301,7 +305,7 @@ body {
 
 @media (min-width: 1024px) {
   .tv-detail-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -311,8 +315,6 @@ body {
   }
 
   .tv-detail-grid {
-    min-height: calc(100vh - 52px);
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, 1.45fr) minmax(0, 0.72fr);
     overflow: hidden;
   }
 
