@@ -10,50 +10,17 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
-import { useBackgroundMusic } from "./BackgroundMusicProvider";
+import {
+  BACKGROUND_MUSIC_VOLUME,
+  useBackgroundMusic,
+} from "./BackgroundMusicProvider";
 import BallMachine from "./BallMachine";
+import ShinyText from "./ShinyText";
+import { SoundEffectControls, useSoundEffects } from "./SoundEffects";
 import { canciones } from "./canciones";
 import { formatearNumero, useKaraokeGame } from "./useKaraokeGame";
 
-const SOUND_EFFECTS = [
-  {
-    id: "dramatico",
-    label: "Dramatico",
-    src: "/sonidos/dramatico.mp3",
-    durationMs: 3000,
-    iconSrc: "/botones/drama.svg",
-  },
-  {
-    id: "risa",
-    label: "Risa",
-    src: "/sonidos/risa.mp3",
-    durationMs: 3000,
-    iconSrc: "/botones/risa.svg",
-  },
-  {
-    id: "grillos",
-    label: "Grillos",
-    src: "/sonidos/sonido-grillos.mp3",
-    durationMs: 3000,
-    iconSrc: "/botones/grillo.svg",
-  },
-  {
-    id: "tambores",
-    label: "Tambores",
-    src: "/sonidos/tambores.mp3",
-    durationMs: 3000,
-    iconSrc: "/botones/tambores.svg",
-  },
-  {
-    id: "triste",
-    label: "Triste",
-    src: "/sonidos/triste.mp3",
-    durationMs: 5000,
-    iconSrc: "/botones/triste.svg",
-  },
-] as const;
-
-const SOUND_GAIN_MULTIPLIER = 2.6;
+const START_SONG_DELAY_MS = 2000;
 const SONG_START_OFFSETS_SECONDS: Partial<Record<number, number>> = {
   1: 3.75,
   7: 15,
@@ -178,17 +145,16 @@ function enforceVideoStartOffset(
   }
 }
 
+function setSongVideoVolume(video: HTMLVideoElement) {
+  video.volume = BACKGROUND_MUSIC_VOLUME;
+}
+
 type CancionesManifest = {
   canciones: Array<{
     numero: number;
     src: string;
   }>;
 };
-
-type WindowWithWebkitAudioContext = Window &
-  typeof globalThis & {
-    webkitAudioContext?: typeof AudioContext;
-  };
 
 export default function DetailScreen() {
   const router = useRouter();
@@ -209,14 +175,12 @@ export default function DetailScreen() {
   const [videoSources, setVideoSources] = useState<Record<number, string>>({});
   const [isSongPlaying, setIsSongPlaying] = useState(false);
   const [isBomboVisible, setIsBomboVisible] = useState(false);
-  const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const gainNodesRef = useRef<Record<string, GainNode>>({});
-  const mediaSourceNodesRef = useRef<Record<string, MediaElementAudioSourceNode>>({});
-  const stopSoundTimeoutRef = useRef<number | null>(null);
+  const [isLyricsFullscreen, setIsLyricsFullscreen] = useState(false);
+  const videoShellRef = useRef<HTMLDivElement | null>(null);
   const backgroundResumeTimeoutRef = useRef<number | null>(null);
-  const currentSoundRef = useRef<string | null>(null);
+  const startSongTimeoutRef = useRef<number | null>(null);
   const songVideoRef = useRef<HTMLVideoElement | null>(null);
+  const { playSound, soundAudioElements } = useSoundEffects();
   const {
     isBackgroundMusicMuted,
     pauseBackgroundMusic,
@@ -240,29 +204,33 @@ export default function DetailScreen() {
     const video = songVideoRef.current;
     if (!video) return;
 
+    setSongVideoVolume(video);
     video.pause();
     seekVideoToSongStart(video, selectedSong);
   }, [selectedSong]);
 
   useEffect(() => {
-    const audioElements = audioRefs.current;
-
     return () => {
-      if (stopSoundTimeoutRef.current !== null) {
-        window.clearTimeout(stopSoundTimeoutRef.current);
-      }
-
       if (backgroundResumeTimeoutRef.current !== null) {
         window.clearTimeout(backgroundResumeTimeoutRef.current);
       }
 
-      for (const audio of Object.values(audioElements)) {
-        if (!audio) continue;
-        audio.pause();
-        audio.currentTime = 0;
+      if (startSongTimeoutRef.current !== null) {
+        window.clearTimeout(startSongTimeoutRef.current);
       }
 
-      void audioContextRef.current?.close().catch(() => {});
+    };
+  }, []);
+
+  useEffect(() => {
+    function handleFullscreenChange() {
+      setIsLyricsFullscreen(document.fullscreenElement === videoShellRef.current);
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
     };
   }, []);
 
@@ -283,89 +251,67 @@ export default function DetailScreen() {
     }, 1000);
   }, [isSongPlaying, pauseBackgroundMusic, resumeBackgroundMusic]);
 
-  function ensureBoostedAudioNode(soundId: string, audio: HTMLAudioElement) {
-    const browserWindow = window as WindowWithWebkitAudioContext;
-    const AudioContextCtor = browserWindow.AudioContext ?? browserWindow.webkitAudioContext;
-    if (!AudioContextCtor) return;
+  function clearPendingSongStart() {
+    if (startSongTimeoutRef.current === null) return;
 
-    if (!audioContextRef.current) {
-      audioContextRef.current = new AudioContextCtor();
-    }
-
-    const audioContext = audioContextRef.current;
-    if (!mediaSourceNodesRef.current[soundId]) {
-      const sourceNode = audioContext.createMediaElementSource(audio);
-      const gainNode = audioContext.createGain();
-      gainNode.gain.value = SOUND_GAIN_MULTIPLIER;
-      sourceNode.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      mediaSourceNodesRef.current[soundId] = sourceNode;
-      gainNodesRef.current[soundId] = gainNode;
-    }
-  }
-
-  function playSoundPreview(soundId: string) {
-    const audio = audioRefs.current[soundId];
-    const sound = SOUND_EFFECTS.find((item) => item.id === soundId);
-    if (!audio || !sound) return;
-
-    if (stopSoundTimeoutRef.current !== null) {
-      window.clearTimeout(stopSoundTimeoutRef.current);
-      stopSoundTimeoutRef.current = null;
-    }
-
-    if (currentSoundRef.current) {
-      const currentAudio = audioRefs.current[currentSoundRef.current];
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-      }
-    }
-
-    currentSoundRef.current = soundId;
-    audio.currentTime = 0;
-    audio.volume = 1;
-    ensureBoostedAudioNode(soundId, audio);
-
-    if (audioContextRef.current?.state === "suspended") {
-      void audioContextRef.current.resume().catch(() => {});
-    }
-
-    void audio.play().catch(() => {});
-
-    stopSoundTimeoutRef.current = window.setTimeout(() => {
-      audio.pause();
-      audio.currentTime = 0;
-      stopSoundTimeoutRef.current = null;
-      if (currentSoundRef.current === soundId) {
-        currentSoundRef.current = null;
-      }
-    }, sound.durationMs);
+    window.clearTimeout(startSongTimeoutRef.current);
+    startSongTimeoutRef.current = null;
   }
 
   function playSong() {
     const video = songVideoRef.current;
     if (!video) return;
+
+    clearPendingSongStart();
     pauseBackgroundMusic();
+    setSongVideoVolume(video);
     seekVideoToSongStart(video, selectedSong);
-    void video.play().catch(() => {});
+    setIsSongPlaying(true);
+
+    startSongTimeoutRef.current = window.setTimeout(() => {
+      startSongTimeoutRef.current = null;
+      void video.play().catch(() => {
+        setIsSongPlaying(false);
+      });
+    }, START_SONG_DELAY_MS);
   }
 
   function pauseSong() {
+    clearPendingSongStart();
+    setIsSongPlaying(false);
     songVideoRef.current?.pause();
   }
 
   function resumeSong() {
+    clearPendingSongStart();
+    const video = songVideoRef.current;
+    if (!video) return;
+
     pauseBackgroundMusic();
-    void songVideoRef.current?.play().catch(() => {});
+    setSongVideoVolume(video);
+    void video.play().catch(() => {});
   }
 
-  function showBomboAndPauseSong() {
-    songVideoRef.current?.pause();
+  function restartSong() {
+    const video = songVideoRef.current;
+    if (!video) return;
+
+    clearPendingSongStart();
+    pauseBackgroundMusic();
+    setSongVideoVolume(video);
+    seekVideoToSongStart(video, selectedSong);
+    setIsSongPlaying(true);
+    void video.play().catch(() => {
+      setIsSongPlaying(false);
+    });
+  }
+
+  function showBombo() {
     setIsBomboVisible(true);
   }
 
   function stopCurrentSong() {
+    clearPendingSongStart();
     songVideoRef.current?.pause();
     setIsSongPlaying(false);
   }
@@ -378,6 +324,19 @@ export default function DetailScreen() {
   function handleSpinBall() {
     stopCurrentSong();
     spinBall();
+  }
+
+  function requestLyricsFullscreen() {
+    const fullscreenTarget = videoShellRef.current ?? songVideoRef.current;
+    if (!fullscreenTarget) return;
+
+    void fullscreenTarget.requestFullscreen().catch(() => {});
+  }
+
+  function exitLyricsFullscreen() {
+    if (!document.fullscreenElement) return;
+
+    void document.exitFullscreen().catch(() => {});
   }
 
   function goToLoadingScreen() {
@@ -393,6 +352,7 @@ export default function DetailScreen() {
   }
 
   function handleSongMetadataLoaded(event: SyntheticEvent<HTMLVideoElement>) {
+    setSongVideoVolume(event.currentTarget);
     seekVideoToSongStart(event.currentTarget, selectedSong);
   }
 
@@ -433,7 +393,7 @@ export default function DetailScreen() {
               <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end">
                 <button
                   type="button"
-                  onClick={showBomboAndPauseSong}
+                  onClick={showBombo}
                   className="rounded-full bg-[#ff4fa0]/14 px-[clamp(14px,1.1vw,20px)] py-[clamp(8px,0.8vw,12px)] text-[clamp(0.8rem,0.9vw,0.98rem)] font-semibold text-white/88 transition hover:bg-[#ff4fa0]/22"
                 >
                   Volver al bombo
@@ -486,7 +446,15 @@ export default function DetailScreen() {
                   Centro
                 </p>
                 <h2 className="mt-2 max-w-full text-[clamp(1.35rem,2vw,2.6rem)] font-black leading-[1.02] tracking-[-0.06em] text-white">
-                  {selectedSong?.titulo ?? "Sin cancion seleccionada"}
+                  <ShinyText
+                    text={selectedSong?.titulo ?? "Sin cancion seleccionada"}
+                    speed={3.4}
+                    delay={1.4}
+                    color="#ffffff"
+                    shineColor="#ffd36b"
+                    spread={105}
+                    direction="left"
+                  />
                 </h2>
                 <p className="mt-2 text-[clamp(0.88rem,1vw,1.08rem)] text-white/66">
                   {selectedSong?.artista ?? "Artista pendiente"}
@@ -497,6 +465,7 @@ export default function DetailScreen() {
 
             <div className="mt-[clamp(10px,0.9vw,16px)] min-h-0 w-full flex-1 overflow-hidden rounded-[2rem]">
               <div
+                ref={videoShellRef}
                 className="tv-video-shell relative flex h-full min-h-[560px] w-full max-w-full overflow-hidden rounded-[2rem] border border-white/8 bg-[linear-gradient(180deg,rgba(3,7,16,0.86),rgba(0,0,0,0.96))] p-0 shadow-[0_28px_80px_rgba(0,0,0,0.42)]"
                 style={{ isolation: "isolate" }}
               >
@@ -535,6 +504,49 @@ export default function DetailScreen() {
                     </div>
                   </div>
                 )}
+                {isLyricsFullscreen ? (
+                  <div className="tv-fullscreen-controls absolute bottom-[clamp(10px,1vw,18px)] left-1/2 z-30 flex w-[min(94%,64rem)] -translate-x-1/2 flex-wrap items-center justify-center gap-2 rounded-full border border-white/12 bg-black/48 px-3 py-2 opacity-95 shadow-[0_18px_48px_rgba(0,0,0,0.38)] backdrop-blur-md">
+                    <button
+                      type="button"
+                      onClick={playSong}
+                      disabled={!selectedSongVideoSource}
+                      className="rounded-full bg-[#ffd36b]/22 px-[clamp(12px,1vw,18px)] py-[clamp(7px,0.7vw,10px)] text-[clamp(0.72rem,0.82vw,0.92rem)] font-semibold text-[#fff0be] transition hover:bg-[#ffd36b]/32 disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      Iniciar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={resumeSong}
+                      disabled={!selectedSongVideoSource}
+                      className="rounded-full bg-[#5ba3ff]/18 px-[clamp(12px,1vw,18px)] py-[clamp(7px,0.7vw,10px)] text-[clamp(0.72rem,0.82vw,0.92rem)] font-semibold text-white/90 transition hover:bg-[#5ba3ff]/28 disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      Reanudar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={pauseSong}
+                      disabled={!selectedSongVideoSource}
+                      className="rounded-full bg-[#ff4fa0]/18 px-[clamp(12px,1vw,18px)] py-[clamp(7px,0.7vw,10px)] text-[clamp(0.72rem,0.82vw,0.92rem)] font-semibold text-white/90 transition hover:bg-[#ff4fa0]/28 disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      Parar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={restartSong}
+                      disabled={!selectedSongVideoSource}
+                      className="rounded-full bg-white/12 px-[clamp(12px,1vw,18px)] py-[clamp(7px,0.7vw,10px)] text-[clamp(0.72rem,0.82vw,0.92rem)] font-semibold text-white/90 transition hover:bg-white/18 disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      Volver a empezar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={exitLyricsFullscreen}
+                      className="rounded-full bg-black/42 px-[clamp(12px,1vw,18px)] py-[clamp(7px,0.7vw,10px)] text-[clamp(0.72rem,0.82vw,0.92rem)] font-semibold text-white/90 transition hover:bg-black/62"
+                    >
+                      Salir pantalla completa
+                    </button>
+                  </div>
+                ) : null}
               </div>
             </div>
 
@@ -560,6 +572,14 @@ export default function DetailScreen() {
               >
                 {isBackgroundMusicMuted ? "Activar fondo" : "Mutear fondo"}
               </button>
+              <button
+                type="button"
+                onClick={requestLyricsFullscreen}
+                disabled={!selectedSongVideoSource}
+                className="rounded-full bg-[#5ba3ff]/14 px-[clamp(16px,1.2vw,22px)] py-[clamp(10px,0.9vw,14px)] text-[clamp(0.82rem,0.92vw,1rem)] font-semibold text-white/90 transition hover:bg-[#5ba3ff]/22 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                Letra pantalla completa
+              </button>
             </div>
           </PanelCard>
 
@@ -578,42 +598,10 @@ export default function DetailScreen() {
                 </div>
               </div>
 
-              <div
-                className="tv-sound-grid mt-[clamp(34px,5vh,72px)] grid content-start sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-1"
-                style={{ gap: "clamp(28px, 3vh, 46px)" }}
-              >
-                {SOUND_EFFECTS.map((sound) => (
-                  <button
-                    key={sound.id}
-                    type="button"
-                    onClick={() => playSoundPreview(sound.id)}
-                    className="group relative overflow-hidden rounded-[1.35rem] transition hover:-translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd36b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#120b1a]"
-                    aria-label={`Reproducir ${sound.label}`}
-                  >
-                    <div className="relative h-[clamp(58px,7.2vh,90px)] overflow-visible rounded-[0.9rem] border border-white/0 bg-transparent p-0 shadow-none">
-                      <Image
-                        src={sound.iconSrc}
-                        alt={sound.label}
-                        fill
-                        sizes="(max-width: 1024px) 40vw, 18vw"
-                        className="scale-[0.9] object-contain p-0 transition duration-200 group-hover:scale-[0.94]"
-                      />
-                    </div>
-                  </button>
-                ))}
-              </div>
+              <SoundEffectControls onPlaySound={playSound} variant="panel" />
             </div>
 
-            {SOUND_EFFECTS.map((sound) => (
-              <audio
-                key={sound.id}
-                ref={(element) => {
-                  audioRefs.current[sound.id] = element;
-                }}
-                preload="auto"
-                src={sound.src}
-              />
-            ))}
+            {soundAudioElements}
           </PanelCard>
         </section>
       </div>
@@ -656,6 +644,10 @@ export default function DetailScreen() {
             <p className="mt-2 text-[clamp(2rem,3.7vw,4.2rem)] font-black leading-none tracking-[-0.08em] text-[#fff0be] [text-shadow:0_4px_24px_rgba(0,0,0,0.55)]">
               {formatearNumero(currentNumber)}
             </p>
+          </div>
+
+          <div className="absolute bottom-[clamp(84px,11vh,132px)] left-[clamp(16px,2vw,40px)] z-30">
+            <SoundEffectControls onPlaySound={playSound} variant="bombo" />
           </div>
 
           {currentNumber !== null && selectedSong ? (

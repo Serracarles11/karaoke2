@@ -101,6 +101,23 @@ body {
   object-position: center;
 }
 
+.tv-video-shell:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  border-radius: 0;
+  background: #000;
+}
+
+.tv-video-shell:fullscreen .tv-video-frame,
+.tv-video-shell:fullscreen .tv-video-element {
+  border-radius: 0;
+}
+
+.tv-video-shell:fullscreen .tv-video-element {
+  object-fit: contain;
+}
+
 .tv-sound-grid {
   display: grid;
   gap: 12px;

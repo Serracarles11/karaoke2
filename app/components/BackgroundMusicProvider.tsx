@@ -13,7 +13,7 @@ import {
 
 const BACKGROUND_MUSIC_SRC =
   "/musica/The%20Game%20Show%20Theme%20Music%20%5BUaRrDZWhtWA%5D.mp3";
-const BACKGROUND_MUSIC_VOLUME = 0.35;
+export const BACKGROUND_MUSIC_VOLUME = 1;
 
 type BackgroundMusicContextValue = {
   isBackgroundMusicMuted: boolean;

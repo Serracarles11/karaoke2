@@ -2,10 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import BallMachine from "./BallMachine";
+import { SoundEffectControls, useSoundEffects } from "./SoundEffects";
 import { formatearNumero, useKaraokeGame } from "./useKaraokeGame";
 
 export default function DrawScreen() {
   const router = useRouter();
+  const { playSound, soundAudioElements } = useSoundEffects();
   const {
     allNumbers,
     currentNumber,
@@ -74,6 +76,10 @@ export default function DrawScreen() {
           >
             Pantalla de carga
           </button>
+        </div>
+
+        <div className="absolute bottom-[clamp(84px,11vh,132px)] left-[clamp(16px,2vw,40px)] z-30">
+          <SoundEffectControls onPlaySound={playSound} variant="bombo" />
         </div>
 
         {currentNumber !== null && selectedSong ? (
@@ -153,6 +159,7 @@ export default function DrawScreen() {
           </div>
         </div>
       </section>
+      {soundAudioElements}
     </main>
   );
 }
