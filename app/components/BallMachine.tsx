@@ -12,7 +12,6 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 type BallMachineProps = {
   numbers: number[];
   drawnNumbers: number[];
-  activeNumber: number | null;
   selectedNumber: number | null;
   spinVersion: number;
 };
@@ -51,7 +50,7 @@ function createBallBody(id: number, x: number, y: number) {
 function drawBall(
   ctx: CanvasRenderingContext2D,
   body: Body,
-  state: "normal" | "active" | "selected" | "drawn",
+  state: "normal" | "selected" | "drawn",
   animationMs = 0,
 ) {
   const { x, y } = body.position;
@@ -78,27 +77,11 @@ function drawBall(
   ctx.rotate(body.angle + swayRotation);
   ctx.scale(pulseScale, pulseScale);
 
-  if (state === "active") {
-    const halo = ctx.createRadialGradient(0, 0, radius * 0.6, 0, 0, radius + 18);
-    halo.addColorStop(0, "rgba(255,224,120,0.22)");
-    halo.addColorStop(0.65, "rgba(255,210,90,0.12)");
-    halo.addColorStop(1, "rgba(255,210,90,0)");
-    ctx.fillStyle = halo;
-    ctx.beginPath();
-    ctx.arc(0, 0, radius + 18, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
   const gradient = ctx.createRadialGradient(-8, -10, 3, 0, 0, radius);
   if (state === "selected") {
     gradient.addColorStop(0, "#fffef7");
     gradient.addColorStop(0.34, accent.light);
     gradient.addColorStop(0.68, "#ffd85a");
-    gradient.addColorStop(1, accent.dark);
-  } else if (state === "active") {
-    gradient.addColorStop(0, "#fffefb");
-    gradient.addColorStop(0.34, accent.light);
-    gradient.addColorStop(0.7, accent.mid);
     gradient.addColorStop(1, accent.dark);
   } else {
     gradient.addColorStop(0, "#ffffff");
@@ -118,14 +101,12 @@ function drawBall(
   ctx.strokeStyle =
     state === "selected"
       ? "rgba(0,0,0,0.92)"
-      : state === "active"
-        ? "rgba(0,0,0,0.88)"
-        : "rgba(0,0,0,0.78)";
-  ctx.lineWidth = state === "selected" ? 3.2 : state === "active" ? 2.8 : 2.4;
+      : "rgba(0,0,0,0.78)";
+  ctx.lineWidth = state === "selected" ? 3.2 : 2.4;
   ctx.stroke();
 
   ctx.strokeStyle =
-    state === "selected" || state === "active"
+    state === "selected"
       ? "rgba(255,255,255,0.78)"
       : "rgba(255,255,255,0.72)";
   ctx.lineWidth = state === "selected" ? 2.6 : 1.8;
@@ -134,7 +115,7 @@ function drawBall(
   ctx.stroke();
 
   ctx.fillStyle =
-    state === "selected" || state === "active"
+    state === "selected"
       ? "rgba(255,255,255,0.72)"
       : "rgba(255,255,255,0.65)";
   ctx.beginPath();
@@ -144,9 +125,6 @@ function drawBall(
   if (state === "selected") {
     ctx.shadowColor = "rgba(255,212,84,0.78)";
     ctx.shadowBlur = 34;
-  } else if (state === "active") {
-    ctx.shadowColor = "rgba(255,226,120,0.65)";
-    ctx.shadowBlur = 18;
   } else {
     ctx.shadowColor = "rgba(180,220,255,0.34)";
     ctx.shadowBlur = 16;
@@ -166,7 +144,6 @@ function drawBall(
 export default function BallMachine({
   numbers,
   drawnNumbers,
-  activeNumber,
   selectedNumber,
   spinVersion,
 }: BallMachineProps) {
@@ -179,18 +156,15 @@ export default function BallMachine({
   const lastFrameTimeRef = useRef<number | null>(null);
   const accumulatedTimeRef = useRef(0);
   const previousSpinVersionRef = useRef(0);
-  const activeNumberRef = useRef<number | null>(activeNumber);
   const selectedNumberRef = useRef<number | null>(selectedNumber);
   const drawnNumbersRef = useRef<Set<number>>(new Set(drawnNumbers));
   const drawnKey = drawnNumbers.join(",");
   const numbersKey = numbers.join(",");
   const visibleNumbers = useMemo(() => {
     const drawnSet = new Set(drawnNumbers);
-    return numbers.filter(
-      (id) => !drawnSet.has(id) || id === selectedNumber || id === activeNumber,
-    );
+    return numbers.filter((id) => !drawnSet.has(id) || id === selectedNumber);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [numbersKey, drawnKey, selectedNumber, activeNumber]);
+  }, [numbersKey, drawnKey, selectedNumber]);
 
   const rebuildBodies = useCallback(
     (width: number, height: number) => {
@@ -228,10 +202,9 @@ export default function BallMachine({
   );
 
   useEffect(() => {
-    activeNumberRef.current = activeNumber;
     selectedNumberRef.current = selectedNumber;
     drawnNumbersRef.current = new Set(drawnNumbers);
-  }, [activeNumber, drawnNumbers, selectedNumber]);
+  }, [drawnNumbers, selectedNumber]);
 
   useEffect(() => {
     const engine = Engine.create({
@@ -630,7 +603,6 @@ export default function BallMachine({
       ctx.strokeRect(18, 18, width - 36, height - 36);
 
       const normalBodies: Array<{ body: Body; state: "normal" | "drawn" }> = [];
-      let activeBody: Body | null = null;
       let selectedBody: Body | null = null;
 
       for (const [id, body] of bodiesRef.current) {
@@ -643,11 +615,6 @@ export default function BallMachine({
           continue;
         }
 
-        if (id === activeNumberRef.current) {
-          activeBody = body;
-          continue;
-        }
-
         normalBodies.push({
           body,
           state: drawnNumbersRef.current.has(id) ? "drawn" : "normal",
@@ -656,10 +623,6 @@ export default function BallMachine({
 
       for (const { body, state } of normalBodies) {
         drawBall(ctx, body, state, timestamp);
-      }
-
-      if (activeBody) {
-        drawBall(ctx, activeBody, "active", timestamp);
       }
 
       if (selectedBody) {

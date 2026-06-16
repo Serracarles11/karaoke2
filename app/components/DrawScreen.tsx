@@ -13,7 +13,6 @@ export default function DrawScreen() {
     currentNumber,
     drawnNumbers,
     isSpinning,
-    previewNumber,
     remainingNumbers,
     selectedSong,
     spinBall,
@@ -40,7 +39,6 @@ export default function DrawScreen() {
           <BallMachine
             numbers={allNumbers}
             drawnNumbers={drawnNumbers}
-            activeNumber={previewNumber}
             selectedNumber={currentNumber}
             spinVersion={spinVersion}
           />
