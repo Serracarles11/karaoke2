@@ -1704,13 +1704,10 @@ packages:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
     engines: {node: '>= 0.4'}
 
-<<<<<<< HEAD
   form-data@4.0.5:
     resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
     engines: {node: '>= 6'}
 
-=======
->>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
   framer-motion@12.40.0:
     resolution: {integrity: sha512-uaBd3qC1v3KQqBEjwTUd183K6PbS+j0yR9w9VmEOLWA/tnUcSn8Xa3uck7t4dgpDoUss8xQTcj8W2L07lrnLFg==}
     peerDependencies:
@@ -1725,7 +1722,6 @@ packages:
       react-dom:
         optional: true
 
-<<<<<<< HEAD
   fs-extra@10.1.0:
     resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
     engines: {node: '>=12'}
@@ -1749,8 +1745,6 @@ packages:
   fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
-=======
->>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -2301,7 +2295,6 @@ packages:
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
 
-<<<<<<< HEAD
   minipass@7.1.3:
     resolution: {integrity: sha512-tEBHqDnIoM/1rXME1zgka9g6Q2lcoCkxHLuc7ODJ5BxbP5d4c2Z5cGgtXAku59200Cx7diuHTOYfSBD8n6mm8A==}
     engines: {node: '>=16 || 14 >=14.17'}
@@ -2314,8 +2307,6 @@ packages:
     resolution: {integrity: sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==}
     hasBin: true
 
-=======
->>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
   motion-dom@12.40.0:
     resolution: {integrity: sha512-HxU3ZaBwNPVQUBQf1xxgq+7JrPNZvjLVxgbpEZL7RrWJnsxOf0/OM+yrHG9ogLQ31Do/r57Oz2gQWPK+6q62mg==}
 
@@ -4922,7 +4913,6 @@ snapshots:
     dependencies:
       is-callable: 1.2.7
 
-<<<<<<< HEAD
   form-data@4.0.5:
     dependencies:
       asynckit: 0.4.0
@@ -4931,8 +4921,6 @@ snapshots:
       hasown: 2.0.3
       mime-types: 2.1.35
 
-=======
->>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
   framer-motion@12.40.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       motion-dom: 12.40.0
@@ -4942,7 +4930,6 @@ snapshots:
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
 
-<<<<<<< HEAD
   fs-extra@10.1.0:
     dependencies:
       graceful-fs: 4.2.11
@@ -4976,8 +4963,6 @@ snapshots:
 
   fs.realpath@1.0.0: {}
 
-=======
->>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
   fsevents@2.3.3:
     optional: true
 
@@ -5520,7 +5505,6 @@ snapshots:
 
   minimist@1.2.8: {}
 
-<<<<<<< HEAD
   minipass@7.1.3: {}
 
   minizlib@3.1.0:
@@ -5531,8 +5515,6 @@ snapshots:
     dependencies:
       minimist: 1.2.8
 
-=======
->>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
   motion-dom@12.40.0:
     dependencies:
       motion-utils: 12.39.0
