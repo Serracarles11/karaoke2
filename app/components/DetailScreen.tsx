@@ -59,6 +59,9 @@ const SOUND_EFFECTS = [
 
 const SOUND_GAIN_MULTIPLIER = 2.6;
 const START_SONG_DELAY_MS = 2000;
+const SONG_TRANSITION_FADE_MS = 1200;
+const SONG_TRANSITION_FADE_STEP_MS = 40;
+const DUCKED_SONG_VIDEO_VOLUME = 0.18;
 const SONG_START_OFFSETS_SECONDS: Partial<Record<number, number>> = {
   1: 3.75,
   7: 15,
@@ -226,11 +229,18 @@ export default function DetailScreen() {
   const stopSoundTimeoutRef = useRef<number | null>(null);
   const backgroundResumeTimeoutRef = useRef<number | null>(null);
   const startSongTimeoutRef = useRef<number | null>(null);
+  const songFadeIntervalRef = useRef<number | null>(null);
+  const wasSpinningRef = useRef(false);
   const currentSoundRef = useRef<string | null>(null);
   const songVideoRef = useRef<HTMLVideoElement | null>(null);
   const {
+    duckBackgroundMusic,
     isBackgroundMusicMuted,
     pauseBackgroundMusic,
+    pauseDrawMusic,
+    playBallRevealSound,
+    playDrawMusic,
+    restoreBackgroundMusicVolume,
     resumeBackgroundMusic,
     toggleBackgroundMusicMute,
   } = useBackgroundMusic();
@@ -272,15 +282,28 @@ export default function DetailScreen() {
         window.clearTimeout(startSongTimeoutRef.current);
       }
 
+      if (songFadeIntervalRef.current !== null) {
+        window.clearInterval(songFadeIntervalRef.current);
+      }
+
       for (const audio of Object.values(audioElements)) {
         if (!audio) continue;
         audio.pause();
         audio.currentTime = 0;
       }
 
+      restoreBackgroundMusicVolume();
       void audioContextRef.current?.close().catch(() => {});
     };
-  }, []);
+  }, [restoreBackgroundMusicVolume]);
+
+  useEffect(() => {
+    if (wasSpinningRef.current && !isSpinning && currentNumber !== null) {
+      playBallRevealSound();
+    }
+
+    wasSpinningRef.current = isSpinning;
+  }, [currentNumber, isSpinning, playBallRevealSound]);
 
   useEffect(() => {
     function handleFullscreenChange() {
@@ -351,6 +374,10 @@ export default function DetailScreen() {
     }
 
     currentSoundRef.current = soundId;
+    duckBackgroundMusic();
+    if (songVideoRef.current) {
+      songVideoRef.current.volume = DUCKED_SONG_VIDEO_VOLUME;
+    }
     audio.currentTime = 0;
     audio.volume = 1;
     ensureBoostedAudioNode(soundId, audio);
@@ -368,6 +395,10 @@ export default function DetailScreen() {
       if (currentSoundRef.current === soundId) {
         currentSoundRef.current = null;
       }
+      restoreBackgroundMusicVolume();
+      if (songVideoRef.current) {
+        setSongVideoVolume(songVideoRef.current);
+      }
     }, sound.durationMs);
   }
 
@@ -378,7 +409,52 @@ export default function DetailScreen() {
     startSongTimeoutRef.current = null;
   }
 
+  function clearSongFade() {
+    if (songFadeIntervalRef.current === null) return;
+
+    window.clearInterval(songFadeIntervalRef.current);
+    songFadeIntervalRef.current = null;
+  }
+
+  function fadeOutCurrentSong() {
+    clearPendingSongStart();
+    clearSongFade();
+
+    const video = songVideoRef.current;
+    if (!video || video.paused || video.volume <= 0) {
+      if (video) {
+        setSongVideoVolume(video);
+      }
+      setIsSongPlaying(false);
+      return Promise.resolve();
+    }
+
+    const startVolume = video.volume;
+    const totalSteps = Math.ceil(
+      SONG_TRANSITION_FADE_MS / SONG_TRANSITION_FADE_STEP_MS,
+    );
+    let currentStep = 0;
+
+    return new Promise<void>((resolve) => {
+      songFadeIntervalRef.current = window.setInterval(() => {
+        currentStep += 1;
+        const progress = Math.min(currentStep / totalSteps, 1);
+
+        video.volume = Math.max(0, startVolume * (1 - progress));
+
+        if (progress < 1) return;
+
+        clearSongFade();
+        video.pause();
+        setSongVideoVolume(video);
+        setIsSongPlaying(false);
+        resolve();
+      }, SONG_TRANSITION_FADE_STEP_MS);
+    });
+  }
+
   function playVideoAfterDelay(video: HTMLVideoElement) {
+    clearSongFade();
     setIsSongPlaying(true);
 
     startSongTimeoutRef.current = window.setTimeout(() => {
@@ -394,6 +470,7 @@ export default function DetailScreen() {
     if (!video) return;
 
     clearPendingSongStart();
+    pauseDrawMusic();
     pauseBackgroundMusic();
     setSongVideoVolume(video);
     seekVideoToSongStart(video, selectedSong);
@@ -402,6 +479,7 @@ export default function DetailScreen() {
 
   function pauseSong() {
     clearPendingSongStart();
+    clearSongFade();
     setIsSongPlaying(false);
     songVideoRef.current?.pause();
   }
@@ -412,6 +490,7 @@ export default function DetailScreen() {
     if (!video) return;
 
     pauseBackgroundMusic();
+    pauseDrawMusic();
     setSongVideoVolume(video);
     playVideoAfterDelay(video);
   }
@@ -421,6 +500,7 @@ export default function DetailScreen() {
     if (!video) return;
 
     clearPendingSongStart();
+    pauseDrawMusic();
     pauseBackgroundMusic();
     setSongVideoVolume(video);
     seekVideoToSongStart(video, selectedSong);
@@ -436,17 +516,22 @@ export default function DetailScreen() {
 
   function stopCurrentSong() {
     clearPendingSongStart();
+    clearSongFade();
     songVideoRef.current?.pause();
+    if (songVideoRef.current) {
+      setSongVideoVolume(songVideoRef.current);
+    }
     setIsSongPlaying(false);
   }
 
-  function handleSelectDrawnSong(number: number) {
-    stopCurrentSong();
+  async function handleSelectDrawnSong(number: number) {
+    await fadeOutCurrentSong();
     selectDrawnSong(number);
   }
 
-  function handleSpinBall() {
-    stopCurrentSong();
+  async function handleSpinBall() {
+    await fadeOutCurrentSong();
+    playDrawMusic();
     spinBall();
   }
 

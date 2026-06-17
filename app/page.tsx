@@ -14,8 +14,7 @@ export default function Home() {
         poster="/intro-poster.jpg"
         aria-hidden="true"
         disablePictureInPicture
-        className="absolute inset-0 h-full w-full object-cover"
-      >
+        className="absolute inset-0 h-full w-full object-cover">
         <source src="/intro-optimized.webm" type="video/webm" />
         <source src="/intro-optimized.mp4" type="video/mp4" />
       </video>

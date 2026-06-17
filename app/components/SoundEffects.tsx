@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { useBackgroundMusic } from "./BackgroundMusicProvider";
 
 const SOUND_EFFECTS = [
   {
@@ -49,6 +50,7 @@ type WindowWithWebkitAudioContext = Window &
   };
 
 export function useSoundEffects() {
+  const { duckBackgroundMusic, restoreBackgroundMusicVolume } = useBackgroundMusic();
   const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
   const audioContextRef = useRef<AudioContext | null>(null);
   const mediaSourceNodesRef = useRef<Record<string, MediaElementAudioSourceNode>>({});
@@ -69,9 +71,10 @@ export function useSoundEffects() {
         audio.currentTime = 0;
       }
 
+      restoreBackgroundMusicVolume();
       void audioContextRef.current?.close().catch(() => {});
     };
-  }, []);
+  }, [restoreBackgroundMusicVolume]);
 
   function ensureBoostedAudioNode(soundId: string, audio: HTMLAudioElement) {
     const browserWindow = window as WindowWithWebkitAudioContext;
@@ -112,6 +115,7 @@ export function useSoundEffects() {
     }
 
     currentSoundRef.current = soundId;
+    duckBackgroundMusic();
     audio.currentTime = 0;
     audio.volume = 1;
     ensureBoostedAudioNode(soundId, audio);
@@ -129,6 +133,7 @@ export function useSoundEffects() {
       if (currentSoundRef.current === soundId) {
         currentSoundRef.current = null;
       }
+      restoreBackgroundMusicVolume();
     }, sound.durationMs);
   }
 
