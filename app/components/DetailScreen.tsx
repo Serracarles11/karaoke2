@@ -58,7 +58,6 @@ const SOUND_EFFECTS = [
 ] as const;
 
 const SOUND_GAIN_MULTIPLIER = 2.6;
-const DUCKED_SONG_VIDEO_VOLUME = 0.12;
 const START_SONG_DELAY_MS = 2000;
 const SONG_START_OFFSETS_SECONDS: Partial<Record<number, number>> = {
   1: 3.75,
@@ -218,6 +217,8 @@ export default function DetailScreen() {
   const [videoSources, setVideoSources] = useState<Record<number, string>>({});
   const [isSongPlaying, setIsSongPlaying] = useState(false);
   const [isBomboVisible, setIsBomboVisible] = useState(false);
+  const [isLyricsFullscreen, setIsLyricsFullscreen] = useState(false);
+  const videoShellRef = useRef<HTMLDivElement | null>(null);
   const audioRefs = useRef<Record<string, HTMLAudioElement | null>>({});
   const audioContextRef = useRef<AudioContext | null>(null);
   const gainNodesRef = useRef<Record<string, GainNode>>({});
@@ -228,10 +229,8 @@ export default function DetailScreen() {
   const currentSoundRef = useRef<string | null>(null);
   const songVideoRef = useRef<HTMLVideoElement | null>(null);
   const {
-    duckBackgroundMusic,
     isBackgroundMusicMuted,
     pauseBackgroundMusic,
-    restoreBackgroundMusicVolume,
     resumeBackgroundMusic,
     toggleBackgroundMusicMute,
   } = useBackgroundMusic();
@@ -279,10 +278,21 @@ export default function DetailScreen() {
         audio.currentTime = 0;
       }
 
-      restoreBackgroundMusicVolume();
       void audioContextRef.current?.close().catch(() => {});
     };
-  }, [restoreBackgroundMusicVolume]);
+  }, []);
+
+  useEffect(() => {
+    function handleFullscreenChange() {
+      setIsLyricsFullscreen(document.fullscreenElement === videoShellRef.current);
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
 
   useEffect(() => {
     if (backgroundResumeTimeoutRef.current !== null) {
@@ -340,12 +350,6 @@ export default function DetailScreen() {
       }
     }
 
-    const songVideo = songVideoRef.current;
-    if (songVideo && isSongPlaying) {
-      songVideo.volume = DUCKED_SONG_VIDEO_VOLUME;
-    }
-    duckBackgroundMusic();
-
     currentSoundRef.current = soundId;
     audio.currentTime = 0;
     audio.volume = 1;
@@ -360,10 +364,6 @@ export default function DetailScreen() {
     stopSoundTimeoutRef.current = window.setTimeout(() => {
       audio.pause();
       audio.currentTime = 0;
-      if (songVideoRef.current && !songVideoRef.current.paused) {
-        setSongVideoVolume(songVideoRef.current);
-      }
-      restoreBackgroundMusicVolume();
       stopSoundTimeoutRef.current = null;
       if (currentSoundRef.current === soundId) {
         currentSoundRef.current = null;
@@ -416,8 +416,21 @@ export default function DetailScreen() {
     playVideoAfterDelay(video);
   }
 
-  function showBomboAndPauseSong() {
-    stopCurrentSong();
+  function restartSong() {
+    const video = songVideoRef.current;
+    if (!video) return;
+
+    clearPendingSongStart();
+    pauseBackgroundMusic();
+    setSongVideoVolume(video);
+    seekVideoToSongStart(video, selectedSong);
+    setIsSongPlaying(true);
+    void video.play().catch(() => {
+      setIsSongPlaying(false);
+    });
+  }
+
+  function showBombo() {
     setIsBomboVisible(true);
   }
 
@@ -435,6 +448,19 @@ export default function DetailScreen() {
   function handleSpinBall() {
     stopCurrentSong();
     spinBall();
+  }
+
+  function requestLyricsFullscreen() {
+    const fullscreenTarget = videoShellRef.current ?? songVideoRef.current;
+    if (!fullscreenTarget) return;
+
+    void fullscreenTarget.requestFullscreen().catch(() => {});
+  }
+
+  function exitLyricsFullscreen() {
+    if (!document.fullscreenElement) return;
+
+    void document.exitFullscreen().catch(() => {});
   }
 
   function goToLoadingScreen() {
@@ -488,7 +514,7 @@ export default function DetailScreen() {
               <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end">
                 <button
                   type="button"
-                  onClick={showBomboAndPauseSong}
+                  onClick={showBombo}
                   className="rounded-full bg-[#ff4fa0]/14 px-[clamp(12px,1vw,18px)] py-[clamp(6px,0.65vw,10px)] text-[clamp(0.76rem,0.84vw,0.92rem)] font-semibold text-white/88 transition hover:bg-[#ff4fa0]/22"
                 >
                   Volver al bombo
@@ -600,6 +626,7 @@ export default function DetailScreen() {
 
             <div className="mt-[clamp(4px,0.45vw,8px)] min-h-0 w-full flex-1 overflow-hidden rounded-[2rem]">
               <div
+                ref={videoShellRef}
                 className="tv-video-shell relative flex h-full min-h-[520px] w-full max-w-full overflow-hidden rounded-[2rem] border border-white/8 bg-[linear-gradient(180deg,rgba(3,7,16,0.86),rgba(0,0,0,0.96))] p-0 shadow-[0_28px_80px_rgba(0,0,0,0.42)] lg:min-h-0"
                 style={{ isolation: "isolate" }}
               >
@@ -638,6 +665,49 @@ export default function DetailScreen() {
                     </div>
                   </div>
                 )}
+                {isLyricsFullscreen ? (
+                  <div className="tv-fullscreen-controls absolute bottom-[clamp(10px,1vw,18px)] left-1/2 z-30 flex w-[min(94%,64rem)] -translate-x-1/2 flex-wrap items-center justify-center gap-2 rounded-full border border-white/12 bg-black/48 px-3 py-2 opacity-95 shadow-[0_18px_48px_rgba(0,0,0,0.38)] backdrop-blur-md">
+                    <button
+                      type="button"
+                      onClick={playSong}
+                      disabled={!selectedSongVideoSource}
+                      className="rounded-full bg-[#ffd36b]/22 px-[clamp(12px,1vw,18px)] py-[clamp(7px,0.7vw,10px)] text-[clamp(0.72rem,0.82vw,0.92rem)] font-semibold text-[#fff0be] transition hover:bg-[#ffd36b]/32 disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      Iniciar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={resumeSong}
+                      disabled={!selectedSongVideoSource}
+                      className="rounded-full bg-[#5ba3ff]/18 px-[clamp(12px,1vw,18px)] py-[clamp(7px,0.7vw,10px)] text-[clamp(0.72rem,0.82vw,0.92rem)] font-semibold text-white/90 transition hover:bg-[#5ba3ff]/28 disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      Reanudar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={pauseSong}
+                      disabled={!selectedSongVideoSource}
+                      className="rounded-full bg-[#ff4fa0]/18 px-[clamp(12px,1vw,18px)] py-[clamp(7px,0.7vw,10px)] text-[clamp(0.72rem,0.82vw,0.92rem)] font-semibold text-white/90 transition hover:bg-[#ff4fa0]/28 disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      Parar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={restartSong}
+                      disabled={!selectedSongVideoSource}
+                      className="rounded-full bg-white/12 px-[clamp(12px,1vw,18px)] py-[clamp(7px,0.7vw,10px)] text-[clamp(0.72rem,0.82vw,0.92rem)] font-semibold text-white/90 transition hover:bg-white/18 disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      Volver a empezar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={exitLyricsFullscreen}
+                      className="rounded-full bg-black/42 px-[clamp(12px,1vw,18px)] py-[clamp(7px,0.7vw,10px)] text-[clamp(0.72rem,0.82vw,0.92rem)] font-semibold text-white/90 transition hover:bg-black/62"
+                    >
+                      Salir pantalla completa
+                    </button>
+                  </div>
+                ) : null}
               </div>
             </div>
 
@@ -662,6 +732,14 @@ export default function DetailScreen() {
                 className="rounded-full bg-[#ff4fa0]/12 px-[clamp(14px,1vw,20px)] py-[clamp(8px,0.72vw,11px)] text-[clamp(0.76rem,0.84vw,0.92rem)] font-semibold text-white/90 transition hover:bg-[#ff4fa0]/20"
               >
                 {isBackgroundMusicMuted ? "Activar fondo" : "Mutear fondo"}
+              </button>
+              <button
+                type="button"
+                onClick={requestLyricsFullscreen}
+                disabled={!selectedSongVideoSource}
+                className="rounded-full bg-[#5ba3ff]/14 px-[clamp(14px,1vw,20px)] py-[clamp(8px,0.72vw,11px)] text-[clamp(0.76rem,0.84vw,0.92rem)] font-semibold text-white/90 transition hover:bg-[#5ba3ff]/22 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                Letra pantalla completa
               </button>
             </div>
           </PanelCard>
@@ -705,6 +783,36 @@ export default function DetailScreen() {
             <p className="mt-2 text-[clamp(2rem,3.7vw,4.2rem)] font-black leading-none tracking-[-0.08em] text-[#fff0be] [text-shadow:0_4px_24px_rgba(0,0,0,0.55)]">
               {formatearNumero(currentNumber)}
             </p>
+          </div>
+
+          <div className="absolute right-[clamp(16px,2vw,40px)] top-1/2 z-30 -translate-y-1/2">
+            <div className="tv-glass-button rounded-[1.2rem] border border-white/10 bg-black/24 p-[clamp(8px,0.8vw,12px)] shadow-[0_16px_48px_rgba(0,0,0,0.24)]">
+              <p className="mb-2 text-[clamp(9px,0.72vw,12px)] uppercase tracking-[0.28em] text-[#ffd58a]/72 [text-shadow:0_2px_18px_rgba(0,0,0,0.45)]">
+                Efectos
+              </p>
+              <div className="grid grid-cols-1 content-start gap-[clamp(6px,0.55vw,10px)]">
+                {SOUND_EFFECTS.map((sound) => (
+                  <button
+                    key={sound.id}
+                    type="button"
+                    onClick={() => playSoundPreview(sound.id)}
+                    className="group relative overflow-hidden rounded-[1.1rem] transition hover:-translate-y-[1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ffd36b]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#120b1a]"
+                    aria-label={`Reproducir ${sound.label}`}
+                    title={sound.label}
+                  >
+                    <div className="relative h-[clamp(38px,4.2vw,58px)] w-[clamp(38px,4.2vw,58px)] overflow-visible rounded-[0.9rem] border border-white/0 bg-transparent p-0 shadow-none">
+                      <Image
+                        src={sound.iconSrc}
+                        alt={sound.label}
+                        fill
+                        sizes="64px"
+                        className="scale-[0.9] object-contain p-0 transition duration-200 group-hover:scale-[0.94]"
+                      />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {currentNumber !== null && selectedSong ? (
