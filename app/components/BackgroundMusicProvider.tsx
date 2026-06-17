@@ -14,17 +14,23 @@ import {
 
 const BACKGROUND_MUSIC_SRC =
   "/musica/The%20Game%20Show%20Theme%20Music%20%5BUaRrDZWhtWA%5D.mp3";
+<<<<<<< HEAD
 const DRAW_MUSIC_SRC = "/musica/sorteo-bola.mp3";
 const BALL_REVEAL_SOUND_SRC = "/sonidos/win31.mp3";
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
 export const BACKGROUND_MUSIC_VOLUME = 1;
 
 type BackgroundMusicContextValue = {
   duckBackgroundMusic: () => void;
   isBackgroundMusicMuted: boolean;
   pauseBackgroundMusic: () => void;
+<<<<<<< HEAD
   pauseDrawMusic: () => void;
   playBallRevealSound: () => void;
   playDrawMusic: () => void;
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
   restoreBackgroundMusicVolume: () => void;
   resumeBackgroundMusic: () => void;
   toggleBackgroundMusicMute: () => void;
@@ -33,8 +39,11 @@ type BackgroundMusicContextValue = {
 const BackgroundMusicContext = createContext<BackgroundMusicContextValue | null>(null);
 
 const DUCKED_BACKGROUND_MUSIC_VOLUME = 0.14;
+<<<<<<< HEAD
 const AUDIO_FADE_MS = 900;
 const AUDIO_FADE_STEP_MS = 40;
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
 
 export function BackgroundMusicProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -127,6 +136,7 @@ export function BackgroundMusicProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+<<<<<<< HEAD
     if (isDrawMusicPlayingRef.current) {
       fadeAudioVolume(audio, 0, backgroundFadeIntervalRef, { pauseWhenDone: true });
       return;
@@ -153,6 +163,21 @@ export function BackgroundMusicProvider({ children }: { children: ReactNode }) {
       fadeAudioVolume(drawAudio, DUCKED_BACKGROUND_MUSIC_VOLUME, drawFadeIntervalRef);
     }
   }, [fadeAudioVolume]);
+=======
+    audio.volume = isDuckedRef.current
+      ? DUCKED_BACKGROUND_MUSIC_VOLUME
+      : BACKGROUND_MUSIC_VOLUME;
+    void audio.play().catch(() => {});
+  }, [isBackgroundMusicMuted]);
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
+
+  const duckBackgroundMusic = useCallback(() => {
+    isDuckedRef.current = true;
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = DUCKED_BACKGROUND_MUSIC_VOLUME;
+  }, []);
 
   const pauseBackgroundMusic = useCallback(() => {
     isManuallyPausedRef.current = true;
@@ -173,6 +198,14 @@ export function BackgroundMusicProvider({ children }: { children: ReactNode }) {
       fadeAudioVolume(drawAudio, BACKGROUND_MUSIC_VOLUME, drawFadeIntervalRef);
     }
   }, [fadeAudioVolume]);
+
+  const restoreBackgroundMusicVolume = useCallback(() => {
+    isDuckedRef.current = false;
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = BACKGROUND_MUSIC_VOLUME;
+  }, []);
 
   const resumeBackgroundMusic = useCallback(() => {
     isManuallyPausedRef.current = false;
@@ -257,9 +290,12 @@ export function BackgroundMusicProvider({ children }: { children: ReactNode }) {
       duckBackgroundMusic,
       isBackgroundMusicMuted,
       pauseBackgroundMusic,
+<<<<<<< HEAD
       pauseDrawMusic,
       playDrawMusic,
       playBallRevealSound,
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
       restoreBackgroundMusicVolume,
       resumeBackgroundMusic,
       toggleBackgroundMusicMute,
@@ -268,9 +304,12 @@ export function BackgroundMusicProvider({ children }: { children: ReactNode }) {
       duckBackgroundMusic,
       isBackgroundMusicMuted,
       pauseBackgroundMusic,
+<<<<<<< HEAD
       pauseDrawMusic,
       playDrawMusic,
       playBallRevealSound,
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
       restoreBackgroundMusicVolume,
       resumeBackgroundMusic,
       toggleBackgroundMusicMute,

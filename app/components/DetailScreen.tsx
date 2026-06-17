@@ -58,10 +58,15 @@ const SOUND_EFFECTS = [
 ] as const;
 
 const SOUND_GAIN_MULTIPLIER = 2.6;
+<<<<<<< HEAD
 const START_SONG_DELAY_MS = 2000;
 const SONG_TRANSITION_FADE_MS = 1200;
 const SONG_TRANSITION_FADE_STEP_MS = 40;
 const DUCKED_SONG_VIDEO_VOLUME = 0.18;
+=======
+const DUCKED_SONG_VIDEO_VOLUME = 0.12;
+const START_SONG_DELAY_MS = 2000;
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
 const SONG_START_OFFSETS_SECONDS: Partial<Record<number, number>> = {
   1: 3.75,
   7: 15,
@@ -229,17 +234,23 @@ export default function DetailScreen() {
   const stopSoundTimeoutRef = useRef<number | null>(null);
   const backgroundResumeTimeoutRef = useRef<number | null>(null);
   const startSongTimeoutRef = useRef<number | null>(null);
+<<<<<<< HEAD
   const songFadeIntervalRef = useRef<number | null>(null);
   const wasSpinningRef = useRef(false);
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
   const currentSoundRef = useRef<string | null>(null);
   const songVideoRef = useRef<HTMLVideoElement | null>(null);
   const {
     duckBackgroundMusic,
     isBackgroundMusicMuted,
     pauseBackgroundMusic,
+<<<<<<< HEAD
     pauseDrawMusic,
     playBallRevealSound,
     playDrawMusic,
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
     restoreBackgroundMusicVolume,
     resumeBackgroundMusic,
     toggleBackgroundMusicMute,
@@ -282,10 +293,13 @@ export default function DetailScreen() {
         window.clearTimeout(startSongTimeoutRef.current);
       }
 
+<<<<<<< HEAD
       if (songFadeIntervalRef.current !== null) {
         window.clearInterval(songFadeIntervalRef.current);
       }
 
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
       for (const audio of Object.values(audioElements)) {
         if (!audio) continue;
         audio.pause();
@@ -296,6 +310,7 @@ export default function DetailScreen() {
       void audioContextRef.current?.close().catch(() => {});
     };
   }, [restoreBackgroundMusicVolume]);
+<<<<<<< HEAD
 
   useEffect(() => {
     if (wasSpinningRef.current && !isSpinning && currentNumber !== null) {
@@ -316,6 +331,8 @@ export default function DetailScreen() {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
     };
   }, []);
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
 
   useEffect(() => {
     if (backgroundResumeTimeoutRef.current !== null) {
@@ -373,6 +390,12 @@ export default function DetailScreen() {
       }
     }
 
+    const songVideo = songVideoRef.current;
+    if (songVideo && isSongPlaying) {
+      songVideo.volume = DUCKED_SONG_VIDEO_VOLUME;
+    }
+    duckBackgroundMusic();
+
     currentSoundRef.current = soundId;
     duckBackgroundMusic();
     if (songVideoRef.current) {
@@ -391,6 +414,10 @@ export default function DetailScreen() {
     stopSoundTimeoutRef.current = window.setTimeout(() => {
       audio.pause();
       audio.currentTime = 0;
+      if (songVideoRef.current && !songVideoRef.current.paused) {
+        setSongVideoVolume(songVideoRef.current);
+      }
+      restoreBackgroundMusicVolume();
       stopSoundTimeoutRef.current = null;
       if (currentSoundRef.current === soundId) {
         currentSoundRef.current = null;
@@ -409,6 +436,7 @@ export default function DetailScreen() {
     startSongTimeoutRef.current = null;
   }
 
+<<<<<<< HEAD
   function clearSongFade() {
     if (songFadeIntervalRef.current === null) return;
 
@@ -455,6 +483,9 @@ export default function DetailScreen() {
 
   function playVideoAfterDelay(video: HTMLVideoElement) {
     clearSongFade();
+=======
+  function playVideoAfterDelay(video: HTMLVideoElement) {
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
     setIsSongPlaying(true);
 
     startSongTimeoutRef.current = window.setTimeout(() => {
@@ -470,7 +501,10 @@ export default function DetailScreen() {
     if (!video) return;
 
     clearPendingSongStart();
+<<<<<<< HEAD
     pauseDrawMusic();
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
     pauseBackgroundMusic();
     setSongVideoVolume(video);
     seekVideoToSongStart(video, selectedSong);
@@ -479,7 +513,10 @@ export default function DetailScreen() {
 
   function pauseSong() {
     clearPendingSongStart();
+<<<<<<< HEAD
     clearSongFade();
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
     setIsSongPlaying(false);
     songVideoRef.current?.pause();
   }
@@ -490,11 +527,15 @@ export default function DetailScreen() {
     if (!video) return;
 
     pauseBackgroundMusic();
+<<<<<<< HEAD
     pauseDrawMusic();
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
     setSongVideoVolume(video);
     playVideoAfterDelay(video);
   }
 
+<<<<<<< HEAD
   function restartSong() {
     const video = songVideoRef.current;
     if (!video) return;
@@ -511,12 +552,19 @@ export default function DetailScreen() {
   }
 
   function showBombo() {
+=======
+  function showBomboAndPauseSong() {
+    stopCurrentSong();
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
     setIsBomboVisible(true);
   }
 
   function stopCurrentSong() {
     clearPendingSongStart();
+<<<<<<< HEAD
     clearSongFade();
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
     songVideoRef.current?.pause();
     if (songVideoRef.current) {
       setSongVideoVolume(songVideoRef.current);
@@ -599,7 +647,11 @@ export default function DetailScreen() {
               <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end">
                 <button
                   type="button"
+<<<<<<< HEAD
                   onClick={showBombo}
+=======
+                  onClick={showBomboAndPauseSong}
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
                   className="rounded-full bg-[#ff4fa0]/14 px-[clamp(12px,1vw,18px)] py-[clamp(6px,0.65vw,10px)] text-[clamp(0.76rem,0.84vw,0.92rem)] font-semibold text-white/88 transition hover:bg-[#ff4fa0]/22"
                 >
                   Volver al bombo
@@ -711,7 +763,10 @@ export default function DetailScreen() {
 
             <div className="mt-[clamp(4px,0.45vw,8px)] min-h-0 w-full flex-1 overflow-hidden rounded-[2rem]">
               <div
+<<<<<<< HEAD
                 ref={videoShellRef}
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
                 className="tv-video-shell relative flex h-full min-h-[520px] w-full max-w-full overflow-hidden rounded-[2rem] border border-white/8 bg-[linear-gradient(180deg,rgba(3,7,16,0.86),rgba(0,0,0,0.96))] p-0 shadow-[0_28px_80px_rgba(0,0,0,0.42)] lg:min-h-0"
                 style={{ isolation: "isolate" }}
               >
@@ -818,6 +873,7 @@ export default function DetailScreen() {
               >
                 {isBackgroundMusicMuted ? "Activar fondo" : "Mutear fondo"}
               </button>
+<<<<<<< HEAD
               <button
                 type="button"
                 onClick={requestLyricsFullscreen}
@@ -826,6 +882,8 @@ export default function DetailScreen() {
               >
                 Letra pantalla completa
               </button>
+=======
+>>>>>>> b37c9dbccc5c81cce2955b369c2f939fc0626b65
             </div>
           </PanelCard>
         </section>
