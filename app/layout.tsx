@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Image from "next/image";
 import { BackgroundMusicProvider } from "./components/BackgroundMusicProvider";
 import "./globals.css";
 
@@ -37,6 +38,14 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col overflow-x-hidden">
         <BackgroundMusicProvider>{children}</BackgroundMusicProvider>
+        <Image
+          src="/dayoff-marcaagua.png"
+          alt="Day Off"
+          width={772}
+          height={779}
+          className="dayoff-watermark"
+          priority
+        />
       </body>
     </html>
   );

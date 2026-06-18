@@ -25,6 +25,17 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+.dayoff-watermark {
+  position: fixed;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 100;
+  width: clamp(58px, 6vw, 92px);
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
 html,
 body {
   height: 100%;
