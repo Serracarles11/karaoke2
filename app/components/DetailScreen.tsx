@@ -25,6 +25,7 @@ const SOUND_EFFECTS = [
     label: "Dramatico",
     src: "/sonidos/dramatico.mp3",
     durationMs: 3000,
+    gainMultiplier: 4,
     iconSrc: "/botones/drama.svg",
   },
   {
@@ -32,6 +33,7 @@ const SOUND_EFFECTS = [
     label: "Risa",
     src: "/sonidos/risa.mp3",
     durationMs: 3000,
+    gainMultiplier: 2.6,
     iconSrc: "/botones/risa.svg",
   },
   {
@@ -39,6 +41,7 @@ const SOUND_EFFECTS = [
     label: "Grillos",
     src: "/sonidos/sonido-grillos.mp3",
     durationMs: 3000,
+    gainMultiplier: 2.6,
     iconSrc: "/botones/grillo.svg",
   },
   {
@@ -46,6 +49,7 @@ const SOUND_EFFECTS = [
     label: "Tambores",
     src: "/sonidos/tambores.mp3",
     durationMs: 3000,
+    gainMultiplier: 2.6,
     iconSrc: "/botones/tambores.svg",
   },
   {
@@ -53,14 +57,31 @@ const SOUND_EFFECTS = [
     label: "Triste",
     src: "/sonidos/triste.mp3",
     durationMs: 5000,
+    gainMultiplier: 2.6,
     iconSrc: "/botones/triste.svg",
+  },
+  {
+    id: "tongo",
+    label: "Tongo",
+    src: "/sonidos/tongo.mp3",
+    durationMs: 5700,
+    gainMultiplier: 4,
+    emoji: "🤥",
+  },
+  {
+    id: "aplausos",
+    label: "Aplausos",
+    src: "/sonidos/aplausos.mp3",
+    durationMs: 17750,
+    gainMultiplier: 2.6,
+    emoji: "👏",
   },
 ] as const;
 
-const SOUND_GAIN_MULTIPLIER = 2.6;
 const START_SONG_DELAY_MS = 2000;
 const SONG_TRANSITION_FADE_MS = 1200;
 const SONG_TRANSITION_FADE_STEP_MS = 40;
+const UNEXPECTED_PAUSE_RETRY_MS = 250;
 const DUCKED_SONG_VIDEO_VOLUME = 0.18;
 const SONG_START_OFFSETS_SECONDS: Partial<Record<number, number>> = {
   1: 3.75,
@@ -229,7 +250,10 @@ export default function DetailScreen() {
   const stopSoundTimeoutRef = useRef<number | null>(null);
   const backgroundResumeTimeoutRef = useRef<number | null>(null);
   const startSongTimeoutRef = useRef<number | null>(null);
+  const unexpectedPauseTimeoutRef = useRef<number | null>(null);
   const songFadeIntervalRef = useRef<number | null>(null);
+  const shouldSongBePlayingRef = useRef(false);
+  const isNaturalEndFadeRef = useRef(false);
   const wasSpinningRef = useRef(false);
   const currentSoundRef = useRef<string | null>(null);
   const songVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -242,6 +266,7 @@ export default function DetailScreen() {
     playDrawMusic,
     restoreBackgroundMusicVolume,
     resumeBackgroundMusic,
+    stopBallRevealSound,
     toggleBackgroundMusicMute,
   } = useBackgroundMusic();
 
@@ -262,6 +287,8 @@ export default function DetailScreen() {
     if (!video) return;
 
     setSongVideoVolume(video);
+    shouldSongBePlayingRef.current = false;
+    isNaturalEndFadeRef.current = false;
     video.pause();
     seekVideoToSongStart(video, selectedSong);
   }, [selectedSong]);
@@ -280,6 +307,10 @@ export default function DetailScreen() {
 
       if (startSongTimeoutRef.current !== null) {
         window.clearTimeout(startSongTimeoutRef.current);
+      }
+
+      if (unexpectedPauseTimeoutRef.current !== null) {
+        window.clearTimeout(unexpectedPauseTimeoutRef.current);
       }
 
       if (songFadeIntervalRef.current !== null) {
@@ -334,7 +365,11 @@ export default function DetailScreen() {
     }, 1000);
   }, [isSongPlaying, pauseBackgroundMusic, resumeBackgroundMusic]);
 
-  function ensureBoostedAudioNode(soundId: string, audio: HTMLAudioElement) {
+  function ensureBoostedAudioNode(
+    soundId: string,
+    audio: HTMLAudioElement,
+    gainMultiplier: number,
+  ) {
     const browserWindow = window as WindowWithWebkitAudioContext;
     const AudioContextCtor = browserWindow.AudioContext ?? browserWindow.webkitAudioContext;
     if (!AudioContextCtor) return;
@@ -347,7 +382,7 @@ export default function DetailScreen() {
     if (!mediaSourceNodesRef.current[soundId]) {
       const sourceNode = audioContext.createMediaElementSource(audio);
       const gainNode = audioContext.createGain();
-      gainNode.gain.value = SOUND_GAIN_MULTIPLIER;
+      gainNode.gain.value = gainMultiplier;
       sourceNode.connect(gainNode);
       gainNode.connect(audioContext.destination);
       mediaSourceNodesRef.current[soundId] = sourceNode;
@@ -380,7 +415,7 @@ export default function DetailScreen() {
     }
     audio.currentTime = 0;
     audio.volume = 1;
-    ensureBoostedAudioNode(soundId, audio);
+    ensureBoostedAudioNode(soundId, audio, sound.gainMultiplier);
 
     if (audioContextRef.current?.state === "suspended") {
       void audioContextRef.current.resume().catch(() => {});
@@ -409,6 +444,13 @@ export default function DetailScreen() {
     startSongTimeoutRef.current = null;
   }
 
+  function clearUnexpectedPauseRetry() {
+    if (unexpectedPauseTimeoutRef.current === null) return;
+
+    window.clearTimeout(unexpectedPauseTimeoutRef.current);
+    unexpectedPauseTimeoutRef.current = null;
+  }
+
   function clearSongFade() {
     if (songFadeIntervalRef.current === null) return;
 
@@ -418,7 +460,9 @@ export default function DetailScreen() {
 
   function fadeOutCurrentSong() {
     clearPendingSongStart();
+    clearUnexpectedPauseRetry();
     clearSongFade();
+    shouldSongBePlayingRef.current = false;
 
     const video = songVideoRef.current;
     if (!video || video.paused || video.volume <= 0) {
@@ -455,11 +499,15 @@ export default function DetailScreen() {
 
   function playVideoAfterDelay(video: HTMLVideoElement) {
     clearSongFade();
+    clearUnexpectedPauseRetry();
+    shouldSongBePlayingRef.current = true;
+    isNaturalEndFadeRef.current = false;
     setIsSongPlaying(true);
 
     startSongTimeoutRef.current = window.setTimeout(() => {
       startSongTimeoutRef.current = null;
       void video.play().catch(() => {
+        shouldSongBePlayingRef.current = false;
         setIsSongPlaying(false);
       });
     }, START_SONG_DELAY_MS);
@@ -470,6 +518,7 @@ export default function DetailScreen() {
     if (!video) return;
 
     clearPendingSongStart();
+    stopBallRevealSound();
     pauseDrawMusic();
     pauseBackgroundMusic();
     setSongVideoVolume(video);
@@ -479,13 +528,16 @@ export default function DetailScreen() {
 
   function pauseSong() {
     clearPendingSongStart();
+    clearUnexpectedPauseRetry();
     clearSongFade();
+    shouldSongBePlayingRef.current = false;
     setIsSongPlaying(false);
     songVideoRef.current?.pause();
   }
 
   function resumeSong() {
     clearPendingSongStart();
+    stopBallRevealSound();
     const video = songVideoRef.current;
     if (!video) return;
 
@@ -500,12 +552,17 @@ export default function DetailScreen() {
     if (!video) return;
 
     clearPendingSongStart();
+    clearUnexpectedPauseRetry();
+    stopBallRevealSound();
     pauseDrawMusic();
     pauseBackgroundMusic();
     setSongVideoVolume(video);
     seekVideoToSongStart(video, selectedSong);
+    shouldSongBePlayingRef.current = true;
+    isNaturalEndFadeRef.current = false;
     setIsSongPlaying(true);
     void video.play().catch(() => {
+      shouldSongBePlayingRef.current = false;
       setIsSongPlaying(false);
     });
   }
@@ -517,7 +574,9 @@ export default function DetailScreen() {
 
   function stopCurrentSong() {
     clearPendingSongStart();
+    clearUnexpectedPauseRetry();
     clearSongFade();
+    shouldSongBePlayingRef.current = false;
     songVideoRef.current?.pause();
     if (songVideoRef.current) {
       setSongVideoVolume(songVideoRef.current);
@@ -568,6 +627,53 @@ export default function DetailScreen() {
 
   function handleSongReady(event: SyntheticEvent<HTMLVideoElement>) {
     enforceVideoStartOffset(event.currentTarget, selectedSong);
+  }
+
+  function handleSongPause(event: SyntheticEvent<HTMLVideoElement>) {
+    const video = event.currentTarget;
+    if (
+      !shouldSongBePlayingRef.current ||
+      isNaturalEndFadeRef.current ||
+      video.ended
+    ) {
+      setIsSongPlaying(false);
+      return;
+    }
+
+    clearUnexpectedPauseRetry();
+    unexpectedPauseTimeoutRef.current = window.setTimeout(() => {
+      unexpectedPauseTimeoutRef.current = null;
+      if (!shouldSongBePlayingRef.current || video.ended) return;
+
+      void video.play().catch(() => {
+        shouldSongBePlayingRef.current = false;
+        setIsSongPlaying(false);
+      });
+    }, UNEXPECTED_PAUSE_RETRY_MS);
+  }
+
+  function handleSongTimeUpdate(event: SyntheticEvent<HTMLVideoElement>) {
+    const video = event.currentTarget;
+    const remainingSeconds = video.duration - video.currentTime;
+
+    if (
+      !shouldSongBePlayingRef.current ||
+      isNaturalEndFadeRef.current ||
+      !Number.isFinite(remainingSeconds) ||
+      remainingSeconds > SONG_TRANSITION_FADE_MS / 1000
+    ) {
+      return;
+    }
+
+    isNaturalEndFadeRef.current = true;
+    void fadeOutCurrentSong();
+  }
+
+  function handleSongEnded() {
+    clearUnexpectedPauseRetry();
+    shouldSongBePlayingRef.current = false;
+    isNaturalEndFadeRef.current = false;
+    setIsSongPlaying(false);
   }
 
   function getSelectedSongVideoSource() {
@@ -651,7 +757,7 @@ export default function DetailScreen() {
 
                 </div>
 
-                <div className="grid grid-cols-5 gap-1">
+                <div className="grid grid-cols-7 gap-1">
                 {SOUND_EFFECTS.map((sound) => (
                   <button
                     key={sound.id}
@@ -661,13 +767,19 @@ export default function DetailScreen() {
                     aria-label={`Reproducir ${sound.label}`}
                   >
                     <div className="relative h-[28px] w-[28px] shrink-0 overflow-visible">
-                      <Image
-                        src={sound.iconSrc}
-                        alt={sound.label}
-                        fill
-                        sizes="64px"
-                        className="scale-[0.92] object-contain p-0 transition duration-200 group-hover:scale-[0.98]"
-                      />
+                      {"iconSrc" in sound ? (
+                        <Image
+                          src={sound.iconSrc}
+                          alt={sound.label}
+                          fill
+                          sizes="64px"
+                          className="scale-[0.92] object-contain p-0 transition duration-200 group-hover:scale-[0.98]"
+                        />
+                      ) : (
+                        <span className="grid h-full w-full place-items-center text-[1.65rem]" aria-hidden="true">
+                          {sound.emoji}
+                        </span>
+                      )}
                     </div>
                   </button>
                 ))}
@@ -731,11 +843,13 @@ export default function DetailScreen() {
                       onCanPlay={handleSongReady}
                       onPlaying={handleSongReady}
                       onPlay={() => {
+                        shouldSongBePlayingRef.current = true;
                         setIsSongPlaying(true);
                         pauseBackgroundMusic();
                       }}
-                      onPause={() => setIsSongPlaying(false)}
-                      onEnded={() => setIsSongPlaying(false)}
+                      onPause={handleSongPause}
+                      onTimeUpdate={handleSongTimeUpdate}
+                      onEnded={handleSongEnded}
                       style={{ backgroundColor: "#000" }}
                     />
                   </div>
@@ -887,13 +1001,22 @@ export default function DetailScreen() {
                     title={sound.label}
                   >
                     <div className="relative h-[clamp(38px,4.2vw,58px)] w-[clamp(38px,4.2vw,58px)] overflow-visible rounded-[0.9rem] border border-white/0 bg-transparent p-0 shadow-none">
-                      <Image
-                        src={sound.iconSrc}
-                        alt={sound.label}
-                        fill
-                        sizes="64px"
-                        className="scale-[0.9] object-contain p-0 transition duration-200 group-hover:scale-[0.94]"
-                      />
+                      {"iconSrc" in sound ? (
+                        <Image
+                          src={sound.iconSrc}
+                          alt={sound.label}
+                          fill
+                          sizes="64px"
+                          className="scale-[0.9] object-contain p-0 transition duration-200 group-hover:scale-[0.94]"
+                        />
+                      ) : (
+                        <span
+                          className="grid h-full w-full place-items-center text-[clamp(1.55rem,2.7vw,2.5rem)]"
+                          aria-hidden="true"
+                        >
+                          {sound.emoji}
+                        </span>
+                      )}
                     </div>
                   </button>
                 ))}

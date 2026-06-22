@@ -27,6 +27,7 @@ type BackgroundMusicContextValue = {
   playDrawMusic: () => void;
   restoreBackgroundMusicVolume: () => void;
   resumeBackgroundMusic: () => void;
+  stopBallRevealSound: () => void;
   toggleBackgroundMusicMute: () => void;
 };
 
@@ -201,6 +202,14 @@ export function BackgroundMusicProvider({ children }: { children: ReactNode }) {
     void audio.play().catch(() => {});
   }, [isBackgroundMusicMuted]);
 
+  const stopBallRevealSound = useCallback(() => {
+    const audio = ballRevealAudioRef.current;
+    if (!audio) return;
+
+    audio.pause();
+    audio.currentTime = 0;
+  }, []);
+
   const toggleBackgroundMusicMute = useCallback(() => {
     setIsBackgroundMusicMuted((current) => {
       const next = !current;
@@ -246,6 +255,7 @@ export function BackgroundMusicProvider({ children }: { children: ReactNode }) {
       playBallRevealSound,
       restoreBackgroundMusicVolume,
       resumeBackgroundMusic,
+      stopBallRevealSound,
       toggleBackgroundMusicMute,
     }),
     [
@@ -257,6 +267,7 @@ export function BackgroundMusicProvider({ children }: { children: ReactNode }) {
       playBallRevealSound,
       restoreBackgroundMusicVolume,
       resumeBackgroundMusic,
+      stopBallRevealSound,
       toggleBackgroundMusicMute,
     ],
   );

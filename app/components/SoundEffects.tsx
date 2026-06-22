@@ -10,6 +10,7 @@ const SOUND_EFFECTS = [
     label: "Dramatico",
     src: "/sonidos/dramatico.mp3",
     durationMs: 3000,
+    gainMultiplier: 4,
     iconSrc: "/botones/drama.svg",
   },
   {
@@ -17,6 +18,7 @@ const SOUND_EFFECTS = [
     label: "Risa",
     src: "/sonidos/risa.mp3",
     durationMs: 3000,
+    gainMultiplier: 2.6,
     iconSrc: "/botones/risa.svg",
   },
   {
@@ -24,6 +26,7 @@ const SOUND_EFFECTS = [
     label: "Grillos",
     src: "/sonidos/sonido-grillos.mp3",
     durationMs: 3000,
+    gainMultiplier: 2.6,
     iconSrc: "/botones/grillo.svg",
   },
   {
@@ -31,6 +34,7 @@ const SOUND_EFFECTS = [
     label: "Tambores",
     src: "/sonidos/tambores.mp3",
     durationMs: 3000,
+    gainMultiplier: 2.6,
     iconSrc: "/botones/tambores.svg",
   },
   {
@@ -38,11 +42,26 @@ const SOUND_EFFECTS = [
     label: "Triste",
     src: "/sonidos/triste.mp3",
     durationMs: 5000,
+    gainMultiplier: 2.6,
     iconSrc: "/botones/triste.svg",
   },
+  {
+    id: "tongo",
+    label: "Tongo",
+    src: "/sonidos/tongo.mp3",
+    durationMs: 5700,
+    gainMultiplier: 4,
+    emoji: "🤥",
+  },
+  {
+    id: "aplausos",
+    label: "Aplausos",
+    src: "/sonidos/aplausos.mp3",
+    durationMs: 17750,
+    gainMultiplier: 2.6,
+    emoji: "👏",
+  },
 ] as const;
-
-const SOUND_GAIN_MULTIPLIER = 2.6;
 
 type WindowWithWebkitAudioContext = Window &
   typeof globalThis & {
@@ -76,7 +95,11 @@ export function useSoundEffects() {
     };
   }, [restoreBackgroundMusicVolume]);
 
-  function ensureBoostedAudioNode(soundId: string, audio: HTMLAudioElement) {
+  function ensureBoostedAudioNode(
+    soundId: string,
+    audio: HTMLAudioElement,
+    gainMultiplier: number,
+  ) {
     const browserWindow = window as WindowWithWebkitAudioContext;
     const AudioContextCtor = browserWindow.AudioContext ?? browserWindow.webkitAudioContext;
     if (!AudioContextCtor) return;
@@ -89,7 +112,7 @@ export function useSoundEffects() {
     if (!mediaSourceNodesRef.current[soundId]) {
       const sourceNode = audioContext.createMediaElementSource(audio);
       const gainNode = audioContext.createGain();
-      gainNode.gain.value = SOUND_GAIN_MULTIPLIER;
+      gainNode.gain.value = gainMultiplier;
       sourceNode.connect(gainNode);
       gainNode.connect(audioContext.destination);
       mediaSourceNodesRef.current[soundId] = sourceNode;
@@ -118,7 +141,7 @@ export function useSoundEffects() {
     duckBackgroundMusic();
     audio.currentTime = 0;
     audio.volume = 1;
-    ensureBoostedAudioNode(soundId, audio);
+    ensureBoostedAudioNode(soundId, audio, sound.gainMultiplier);
 
     if (audioContextRef.current?.state === "suspended") {
       void audioContextRef.current.resume().catch(() => {});
@@ -195,13 +218,24 @@ export function SoundEffectControls({
                 isBombo ? "h-[clamp(38px,4.2vw,58px)] w-[clamp(38px,4.2vw,58px)]" : "h-[clamp(58px,7.2vh,90px)]"
               }`}
             >
-              <Image
-                src={sound.iconSrc}
-                alt={sound.label}
-                fill
-                sizes={isBombo ? "64px" : "(max-width: 1024px) 40vw, 18vw"}
-                className="scale-[0.9] object-contain p-0 transition duration-200 group-hover:scale-[0.94]"
-              />
+              {"iconSrc" in sound ? (
+                <Image
+                  src={sound.iconSrc}
+                  alt={sound.label}
+                  fill
+                  sizes={isBombo ? "64px" : "(max-width: 1024px) 40vw, 18vw"}
+                  className="scale-[0.9] object-contain p-0 transition duration-200 group-hover:scale-[0.94]"
+                />
+              ) : (
+                <span
+                  className={`grid h-full w-full place-items-center ${
+                    isBombo ? "text-[clamp(1.55rem,2.7vw,2.5rem)]" : "text-[clamp(2.4rem,5vh,4rem)]"
+                  }`}
+                  aria-hidden="true"
+                >
+                  {sound.emoji}
+                </span>
+              )}
             </div>
           </button>
         ))}
