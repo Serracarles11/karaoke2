@@ -11,6 +11,16 @@ type StoredGameState = {
   drawnNumbers: number[];
 };
 
+// Nota: este componente puede ejecutarse embebido en un <iframe> de terceros
+// (p.ej. dayoffevents.com incrustando esta app de Vercel). En ese contexto los
+// navegadores (Chrome con bloqueo de cookies de terceros, Safari ITP, Firefox
+// ETP) bloquean o particionan las cookies de terceros, por lo que
+// document.cookie puede fallar silenciosamente al leer/escribir. localStorage
+// no tiene esa restricción de SameSite y sigue funcionando de forma fiable
+// incluso con "storage partitioning", así que es el mecanismo principal.
+// Se mantiene la cookie como intento adicional (por compatibilidad con
+// visitas directas / la app de escritorio) pero nunca como única fuente.
+
 function readGameCookie() {
   if (typeof document === "undefined") return null;
 
@@ -32,13 +42,69 @@ function readGameCookie() {
 function writeGameCookie(state: StoredGameState) {
   if (typeof document === "undefined") return;
 
-  document.cookie = `${GAME_COOKIE_NAME}=${encodeURIComponent(JSON.stringify(state))}; path=/; max-age=${GAME_COOKIE_MAX_AGE}; samesite=lax`;
+  try {
+    document.cookie = `${GAME_COOKIE_NAME}=${encodeURIComponent(JSON.stringify(state))}; path=/; max-age=${GAME_COOKIE_MAX_AGE}; samesite=none; secure`;
+  } catch {
+    // Puede fallar en contextos de terceros con cookies bloqueadas: no pasa nada,
+    // localStorage es la fuente de verdad.
+  }
 }
 
 function clearGameCookie() {
   if (typeof document === "undefined") return;
 
-  document.cookie = `${GAME_COOKIE_NAME}=; path=/; max-age=0; samesite=lax`;
+  try {
+    document.cookie = `${GAME_COOKIE_NAME}=; path=/; max-age=0; samesite=none; secure`;
+  } catch {
+    // ignorar
+  }
+}
+
+function readGameStorage(): StoredGameState | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw = window.localStorage.getItem(GAME_COOKIE_NAME);
+    if (!raw) return null;
+    return JSON.parse(raw) as StoredGameState;
+  } catch {
+    return null;
+  }
+}
+
+function writeGameStorage(state: StoredGameState) {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(GAME_COOKIE_NAME, JSON.stringify(state));
+  } catch {
+    // Almacenamiento no disponible (modo privado, cuota, etc.): se ignora,
+    // la partida seguirá funcionando en memoria durante la sesión actual.
+  }
+}
+
+function clearGameStorage() {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.removeItem(GAME_COOKIE_NAME);
+  } catch {
+    // ignorar
+  }
+}
+
+function readGameState(): StoredGameState | null {
+  return readGameStorage() ?? readGameCookie();
+}
+
+function writeGameState(state: StoredGameState) {
+  writeGameStorage(state);
+  writeGameCookie(state);
+}
+
+function clearGameState() {
+  clearGameStorage();
+  clearGameCookie();
 }
 
 export function formatearNumero(value: number | null) {
@@ -82,7 +148,7 @@ export function useKaraokeGame() {
       };
     }
 
-    const storedState = readGameCookie();
+    const storedState = readGameState();
     if (!storedState) {
       hasLoadedGameRef.current = true;
       return;
@@ -113,7 +179,7 @@ export function useKaraokeGame() {
     if (!hasLoadedGameRef.current) return;
     if (isReviewModeRef.current) return;
 
-    writeGameCookie({
+    writeGameState({
       currentNumber,
       drawnNumbers,
     });
@@ -201,7 +267,7 @@ export function useKaraokeGame() {
       return;
     }
 
-    clearGameCookie();
+    clearGameState();
     setDrawnNumbers([]);
     setPreviewNumber(null);
     setCurrentNumber(null);
